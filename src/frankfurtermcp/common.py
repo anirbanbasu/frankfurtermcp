@@ -13,8 +13,6 @@ from importlib.metadata import metadata
 import os
 from typing import Any
 
-load_dotenv()
-
 
 class EnvironmentVariables:
     """
@@ -48,6 +46,8 @@ package_metadata = metadata(AppMetadata.PACKAGE_NAME)
 SPACE_STRING = " "
 TRUE_VALUES_LIST = ["true", "1", "yes", "on", "yes", "y", "t"]
 FALSE_VALUES_LIST = ["false", "0", "no", "off", "n", "f"]
+
+load_dotenv()
 
 
 def parse_env(

@@ -1,6 +1,5 @@
 import asyncio
 import sys
-import json
 from fastmcp import Client
 from typer import Typer
 from rich import print as print
@@ -21,7 +20,7 @@ from llama_index.tools.mcp import (
 # from frankfurtermcp.common import ic
 
 app = Typer(
-    name=f"{package_metadata["Name"]}-cli",
+    name=f"{package_metadata['Name']}-cli",
     no_args_is_help=True,
     add_completion=False,
     help="A command-line test interface for the Frankfurter MCP server.",
@@ -84,9 +83,7 @@ def tools_info():
 
 
 @app.command()
-def llamaindex_tools_list(
-    show_function_schema: bool = False,
-):
+def llamaindex_tools_list():
     """
     List tools from the MCP server using LlamaIndex's MCP client.
     """
@@ -105,40 +102,12 @@ def llamaindex_tools_list(
         )
         table.add_column("Name", style="cyan", no_wrap=True)
         table.add_column(
-            (
-                "Description"
-                if not show_function_schema
-                else "Description and input parameters"
-            ),
+            ("Description"),
             style="yellow",
         )
         for tool in tools_list:
             tool_metadata = tool.__dict__["_metadata"]
-            # ic(json.dumps(tool_metadata.fn_schema.__dict__, default=str))
             table.add_row(tool_metadata.name, tool_metadata.description)
-            if show_function_schema:
-                table.add_row(None, None)
-                # for (
-                #     field,
-                #     field_info,
-                # ) in tool_metadata.fn_schema.__pydantic_fields__.items():
-                #     tool_fields[field] = {
-                #         "type": field_info.annotation.__name__,
-                #         "description": (
-                #             field_info.description if field_info.description else None
-                #         ),
-                #         # "required": (True if field_info["required"] else False),
-                #         # "default": (
-                #         #     field_info.default
-                #         #     if field_info["required"] and field_info.default is not None
-                #         #     else None
-                #         # ),
-                #     }
-                # ic(vars(tool_metadata.fn_schema))
-                table.add_row(
-                    None,
-                    json.dumps(tool_metadata.fn_schema.__dict__, indent=2, default=str),
-                )
             table.add_section()
         console = Console()
         console.print(table)

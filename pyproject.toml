@@ -1,6 +1,6 @@
 [project]
 name = "frankfurtermcp"
-version = "0.2.1"
+version = "0.2.2"
 description = "A MCP server for the Frankfurter API for currency exchange rates."
 readme = "README.md"
 license = "MIT"
@@ -10,7 +10,6 @@ authors = [
 requires-python = ">=3.12"
 dependencies = [
     "fastmcp>=2.7.0",
-    "llama-index-tools-mcp>=0.2.5",
     "python-dotenv>=1.1.0",
     "typer>=0.16.0",
 ]
@@ -26,6 +25,9 @@ build-backend = "hatchling.build"
 [dependency-groups]
 dev = [
     "icecream>=2.1.4",
+]
+opt = [
+    "llama-index-tools-mcp>=0.2.5",
 ]
 test = [
     "pytest>=8.4.0",

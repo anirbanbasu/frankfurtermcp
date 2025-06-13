@@ -5,6 +5,7 @@ from typing import Annotated, List
 import certifi
 import httpx
 import ssl
+from dotenv import load_dotenv
 
 from fastmcp import FastMCP, Context
 
@@ -369,6 +370,7 @@ def main():
         # This is absolutely necessary to exit the program
         sys.exit(0)
 
+    load_dotenv()
     # TODO: Should we also catch SIGTERM, SIGKILL, etc.? What about Windows?
     signal.signal(signal.SIGINT, sigint_handler)
 

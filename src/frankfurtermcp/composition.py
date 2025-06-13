@@ -4,6 +4,7 @@ from fastmcp import FastMCP
 from frankfurtermcp.common import EnvironmentVariables
 from frankfurtermcp.server import app as frankfurtermcp
 from frankfurtermcp.common import parse_env
+from dotenv import load_dotenv
 
 app = FastMCP(
     name="test_composition",
@@ -48,6 +49,7 @@ def main():
         # This is absolutely necessary to exit the program
         sys.exit(0)
 
+    load_dotenv()
     signal.signal(signal.SIGINT, sigint_handler)
 
     app.mount(prefix=COMPOSITION_PREFIX, server=frankfurtermcp, as_proxy=False)
