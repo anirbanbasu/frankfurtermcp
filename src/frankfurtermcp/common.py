@@ -119,9 +119,9 @@ frankfurter_api_url = parse_env(
 )
 
 
-def get_nonstdio_mcp_client() -> Client:
+def get_nonstdio_transport_endpoint() -> str:
     """
-    Create and return a non-stdio MCP client to connect to built-in server based on the environment variables.
+    Get the transport endpoint for the non-stdio MCP client based on environment variables.
     """
     transport_type = parse_env(
         EnvironmentVariables.MCP_SERVER_TRANSPORT,
@@ -147,6 +147,14 @@ def get_nonstdio_mcp_client() -> Client:
             f"Unsupported transport type: {transport_type}. "
             "Allowed values are for this type of client are only sse and streamable-http: "
         )
+    return transport_endpoint
+
+
+def get_nonstdio_mcp_client() -> Client:
+    """
+    Create and return a non-stdio MCP client to connect to built-in server based on the environment variables.
+    """
+    transport_endpoint = get_nonstdio_transport_endpoint()
     mcp_client = Client(
         transport=transport_endpoint,
         timeout=60,
