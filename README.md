@@ -1,4 +1,6 @@
+[![smithery badge](https://smithery.ai/badge/@anirbanbasu/frankfurtermcp)](https://smithery.ai/server/@anirbanbasu/frankfurtermcp)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue?logo=python&logoColor=3776ab&labelColor=e4e4e4)](https://www.python.org/downloads/release/python-3120/) [![Dependabot Updates](https://github.com/anirbanbasu/frankfurtermcp/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/anirbanbasu/frankfurtermcp/actions/workflows/dependabot/dependabot-updates) [![pytest](https://github.com/anirbanbasu/frankfurtermcp/actions/workflows/uv-pytest.yml/badge.svg)](https://github.com/anirbanbasu/frankfurtermcp/actions/workflows/uv-pytest.yml)
+
 # Frankfurter MCP
 
 [Frankfurter](https://frankfurter.dev/) is a useful API for latest currency exchange rates, historical data, or time series published by sources such as the European Central Bank. Should you have to access the Frankfurter API as tools for language model agents exposed over the Model Context Protocol (MCP), Frankfurter MCP is what you need.
@@ -17,6 +19,14 @@ Following is a table of some updates regarding the project status. Note that the
 ## Installation
 
 The directory where you clone this repository will be referred to as the _working directory_ or _WD_ hereinafter.
+
+### Installing via Smithery
+
+To install Frankfurter Currency Exchange Server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@anirbanbasu/frankfurtermcp):
+
+```bash
+npx -y @smithery/cli install @anirbanbasu/frankfurtermcp --client claude
+```
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/). To install the project with its essential dependencies in a virtual environment, run the following in the _WD_. To install all non-essential dependencies (_which are required for developing and testing_), add the `--all-extras` flag to the following command.
 
