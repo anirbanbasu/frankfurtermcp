@@ -21,5 +21,5 @@ RUN pip install --upgrade pip
 RUN pip install wheel ./dist/frankfurtermcp-*.whl
 
 # Run the application
-ENTRYPOINT ["/bin/sh", "-c"]
+ENTRYPOINT ["sh", "-c"]
 CMD ["python -m frankfurtermcp.server"]

@@ -1,13 +1,9 @@
 # Check reference at https://smithery.ai/docs/build/project-config/smithery-yaml
 runtime: "container"
 env:
-  FASTMCP_HOST: "0.0.0.0"
-  FASTMCP_DEBUG: "False"
-  FASTMCP_LOG_LEVEL: "INFO"
+  FASTMCP_HOST: "127.0.0.1"
+  # FASTMCP_PORT will be picked up from the PORT environment variable set by Smithery
   MCP_SERVER_TRANSPORT: "streamable-http"
-  FRANKFURTER_API_URL: "https://api.frankfurter.dev/v1"
-  HTTPX_TIMEOUT: "5.0"
-  HTTPX_VERIFY_SSL: "True"
 build:
   dockerfile: "smithery.dockerfile"
   dockerBuildPath: "."
@@ -19,3 +15,4 @@ startCommand:
       apiKey:
         type: "string"
         description: "Unused API key"
+    required: []
