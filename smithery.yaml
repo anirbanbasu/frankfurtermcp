@@ -1,20 +1,21 @@
-# Check reference at https://smithery.ai/docs/build/project-config/smithery-yaml
-runtime: "container"
+# Smithery configuration file: https://smithery.ai/docs/build/project-config
+
 env:
-  FASTMCP_HOST: "0.0.0.0"
+  FASTMCP_HOST: 0.0.0.0
   FASTMCP_DEBUG: "False"
-  FASTMCP_LOG_LEVEL: "INFO"
-  # FASTMCP_PORT will be picked up from the PORT environment variable set by Smithery
-  MCP_SERVER_TRANSPORT: "streamable-http"
+  FASTMCP_LOG_LEVEL: INFO
+  MCP_SERVER_TRANSPORT: streamable-http
 build:
-  dockerfile: "smithery.dockerfile"
-  dockerBuildPath: "."
+  dockerfile: smithery.dockerfile
+  dockerBuildPath: .
+runtime: container
 startCommand:
-  type: "http"
+  type: http
   configSchema:
-    type: "object"
+    # JSON Schema defining the configuration options for the MCP.
+    type: object
+    required: []
     properties:
       apiKey:
-        type: "string"
-        description: "Unused API key"
-    required: []
+        type: string
+        description: Unused API key
