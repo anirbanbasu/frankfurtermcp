@@ -20,6 +20,15 @@ Following is a table of some updates regarding the project status. Note that the
 
 The directory where you clone this repository will be referred to as the _working directory_ or _WD_ hereinafter.
 
+### Installing via Smithery
+
+To install Frankfurter MCP Server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@anirbanbasu/frankfurtermcp):
+
+```bash
+npx -y @smithery/cli install @anirbanbasu/frankfurtermcp --client claude
+```
+
+### Manual installation
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/). To install the project with its minimal dependencies in a virtual environment, run the following in the _WD_. To install all non-essential dependencies (_which are required for developing and testing_), replace the `--no-dev` with the `--all-groups --all-extras` flag in the following command.
 
 ```bash
