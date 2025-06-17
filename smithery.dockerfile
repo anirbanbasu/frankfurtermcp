@@ -16,4 +16,5 @@ RUN pip install --upgrade pip && pip install --no-cache-dir .
 
 ENV PATH="/home/app_user/.local/bin:$PATH"
 
-ENTRYPOINT ["/bin/bash", "-c", "MCP_SERVER_TRANSPORT=stdio frankfurtermcp"]
+ENTRYPOINT ["/bin/bash", "-c"]
+CMD ["MCP_SERVER_TRANSPORT=stdio frankfurtermcp"]
