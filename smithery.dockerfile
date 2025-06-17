@@ -12,8 +12,8 @@ WORKDIR /home/app_user/app
 COPY ./README.md ./LICENSE ./pyproject.toml .env.smithery ./src ./
 RUN mv .env.smithery .env
 
-# Install the latest version as available on PyPI
 RUN pip install --upgrade pip && pip install --no-cache-dir .
 
-ENTRYPOINT ["sh", "-c"]
-CMD ["python -m frankfurtermcp.server"]
+ENV PATH="/home/app_user/.local/bin:$PATH"
+
+ENTRYPOINT ["/bin/bash", "-c", "MCP_SERVER_TRANSPORT=stdio frankfurtermcp"]
