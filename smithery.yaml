@@ -4,7 +4,6 @@ version: 1
 runtime: "container"
 env:
   MCP_SERVER_TRANSPORT: "stdio"
-  PORT: 8000
   FASTMCP_DEBUG: "False"
   FASTMCP_LOG_LEVEL: "INFO"
 build:
@@ -14,11 +13,8 @@ startCommand:
   type: "stdio"
   configSchema:
     type: "object"
-    properties:
-      apiKey:
-        type: "string"
-        description: "Unused API key"
+    properties: {}
     required: []
   commandFunction:
     |-
-    (config) => ({command: 'python -m frankfurtermcp.server'})
+    (config) => ({ command: 'python', args: ['-m', 'frankfurtermcp.server'] })

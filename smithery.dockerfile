@@ -9,10 +9,11 @@ USER app_user
 # Set the working directory in the container
 WORKDIR /home/app_user/app
 
-COPY ./README.md ./LICENSE ./pyproject.toml ./src ./
+COPY ./README.md ./LICENSE ./pyproject.toml .env.smithery ./src ./
+RUN mv .env.smithery .env
 
 # Install the latest version as available on PyPI
 RUN pip install --upgrade pip && pip install --no-cache-dir .
 
-ENTRYPOINT ["sh", "-c"]
-CMD ["PORT=${PORT} FASTMCP_PORT=${PORT} MCP_SERVER_TRANSPORT=stdio python -m frankfurtermcp.server"]
+ENTRYPOINT ["python", "-m", "frankfurtermcp.server"]
+# CMD ["python -m frankfurtermcp.server"]
