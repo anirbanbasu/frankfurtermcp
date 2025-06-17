@@ -15,5 +15,5 @@ RUN mv .env.smithery .env
 # Install the latest version as available on PyPI
 RUN pip install --upgrade pip && pip install --no-cache-dir .
 
-ENTRYPOINT ["python", "-m", "frankfurtermcp.server"]
-# CMD ["python -m frankfurtermcp.server"]
+ENTRYPOINT ["sh", "-c"]
+CMD ["python -m frankfurtermcp.server"]
