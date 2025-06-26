@@ -79,6 +79,7 @@ The MCP endpoint will be available over HTTP at [http://localhost:8000/sse](http
 There is one Dockerfile provided in this repository.
 
  - `local.dockerfile` for using the latest version, which can contain your edits to the code if you do make edits.
+ - `smithery.dockerfile` for deploying to [Smithery AI](https://smithery.ai/), which you do not have to use.
 
 To build the image, create the container and start it, run the following in _WD_. _Choose shorter names for the image and container if you prefer._
 
