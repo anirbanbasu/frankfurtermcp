@@ -31,4 +31,4 @@ jobs:
         run: uv sync --all-extras
 
       - name: Run tests using pytest
-        run: uv run --group test pytest tests/
+        run: MCP_SERVER_TRANSPORT=streamable-http uv run --group test pytest tests/

@@ -37,11 +37,11 @@ The underlying HTTP client also respects some environment variables, as document
 
 | Variable |  [Default value] and description   |
 |--------------|----------------|
-| `HTTPX_TIMEOUT` | [5.0] The time for the underlying HTTP client to wait, in seconds, for a response. |
+| `HTTPX_TIMEOUT` | [5.0] The time for the underlying HTTP client to wait, in seconds, for a response from the Frankfurter API. |
 | `HTTPX_VERIFY_SSL` | [True] This variable can be set to False to turn off SSL certificate verification, if, for instance, you are using a proxy server with a self-signed certificate. However, setting this to False _is advised against_: instead, use the `SSL_CERT_FILE` and `SSL_CERT_DIR` variables to properly configure self-signed certificates. |
 | `FAST_MCP_HOST` | [0.0.0.0] This variable specifies which host the MCP server must bind to unless the server transport (see below) is set to `stdio`. |
 | `FAST_MCP_PORT` | [8000] This variable specifies which port the MCP server must listen on unless the server transport (see below) is set to `stdio`. |
-| `MCP_SERVER_TRANSPORT` | [streamable-http] The acceptable options are `stdio`, `sse` or `streamable-http`. Given the use-case of running this MCP server as a remotely accessible endpoint, there is no real reason to choose `stdio`. |
+| `MCP_SERVER_TRANSPORT` | [stdio] The acceptable options are `stdio`, `sse` or `streamable-http`. However, in the `.env.template`, the default value is set to `streamable-http`. |
 | `MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE` | [True] An _experimental feature_ to include additional metadata to the MCP type `TextContent` that wraps the response data from each tool call. The additional metadata, for example, will include (as of June 21, 2025) the API URL of the Frankfurter server that is used to obtain the responses. |
 | `FRANKFURTER_API_URL` | [https://api.frankfurter.dev/v1] If you are [self-hosting the Frankfurter API](https://hub.docker.com/r/lineofflight/frankfurter), you should change this to the API endpoint address of your deployment. |
 
@@ -156,7 +156,7 @@ This will produce an output similar to the screenshot below.
 
 ![cli-help-screenshot](https://raw.githubusercontent.com/anirbanbasu/frankfurtermcp/master/screenshots/cli-help.png "FrankfurterMCP CLI help")
 
-Before calling the `tools-info` command, you **MUST** have the server running in `streamable-http` or `sse` transport mode, preferably locally, e.g., by invoking `uv run frankfurtermcp`. A successful call of the `tools-info` command will generate an output similar to the screenshot shown below.
+Before calling the `tools-info` command, you **MUST** have the server running in `streamable-http` or `sse` transport mode, preferably locally, e.g., by invoking `MCP_SERVER_TRANSPORT=streamable-http uv run frankfurtermcp`. A successful call of the `tools-info` command will generate an output similar to the screenshot shown below.
 
 ![cli-tools-info-screenshot](https://raw.githubusercontent.com/anirbanbasu/frankfurtermcp/master/screenshots/cli-tools-info.png "FrankfurterMCP CLI tools-info")
 
