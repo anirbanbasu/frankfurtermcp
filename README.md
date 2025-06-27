@@ -129,8 +129,7 @@ nvm use --lts
 Following that (install and) run the MCP Inspector by executing the following in the _WD_.
 
 ```bash
-npx @modelcontextprotocol/inspector uvx frankfurtermcp \
-    -e MCP_SERVER_TRANSPORT=stdio
+npx @modelcontextprotocol/inspector uv run frankfurtermcp
 ```
 
 This will create a local URL at port 6274 with an authentication token, which you can copy and browse to on your browser. Once on the MCP Inspector UI, press _Connect_ to connect to the MCP server. Thereafter, you can explore the tools available on the server.
@@ -139,13 +138,10 @@ The server entry to run with `stdio` transport that you can use with systems suc
 
 ```json
 {
-    "command": "uvx",
+    "command": "uv",
     "args": [
-        "frankfurtermcp"
-    ],
-    "env": {
-        "MCP_SERVER_TRANSPORT": "stdio"
-    }
+        "run frankfurtermcp"
+    ]
 }
 ```
 
@@ -181,10 +177,10 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 To run the provided test cases, execute the following. Add the flag `--capture=tee-sys` to the command to display further console output.
 
-_Note that for the tests to succeed, the environment variable `MCP_SERVER_TRANSPORT` must be set to either `sse` or `streamable-http`, or not set at all, in which case it will default to `streamable-http`_.
+_Note that for the tests to succeed, the environment variable `MCP_SERVER_TRANSPORT` must be set to either `sse` or `streamable-http`. If not set, it will default to `stdio` and the tests will fail_.
 
 ```bash
-uv run --group test pytest tests/
+MCP_SERVER_TRANSPORT=streamable-http uv run --group test pytest tests/
 ```
 
 ## License

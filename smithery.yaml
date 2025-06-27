@@ -1,7 +1,5 @@
 # Check reference at https://smithery.ai/docs/build/project-config/smithery-yaml
 runtime: "container"
-env:
-  MCP_SERVER_TRANSPORT: "stdio"  # Changed from streamable-http
 build:
   dockerfile: "smithery.dockerfile"
   dockerBuildPath: "."
