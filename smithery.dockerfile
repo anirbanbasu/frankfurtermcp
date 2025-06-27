@@ -10,5 +10,7 @@ COPY src/ pyproject.toml README.md LICENSE ./
 # Install the latest version from the cloned repository
 RUN pip install --upgrade pip && pip install --no-cache-dir .
 
+ENV PATH="/home/app_user/.local/bin:$PATH"
+
 # For stdio transport, we need a direct entrypoint
 ENTRYPOINT ["python3", "-m", "frankfurtermcp.server"]
