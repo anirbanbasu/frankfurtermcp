@@ -11,5 +11,5 @@ startCommand:
   commandFunction:
     # A JS function that produces the CLI command based on the given config to start the MCP on stdio.
     |-
-    (config) => ({ command: 'python3', args: ['-m', 'frankfurtermcp.server'] })
+    (config) => ({ command: 'python3', args: ['-m', 'frankfurtermcp.server'], env: {"MCP_SERVER_TRANSPORT": "streamable-http"} })
   exampleConfig: {}

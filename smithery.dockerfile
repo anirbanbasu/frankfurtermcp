@@ -11,5 +11,5 @@ RUN pip install --upgrade pip && pip install --no-cache-dir .
 
 # ENV PATH="/home/app_user/.local/bin:$PATH"
 
-# For stdio transport, we need a direct entrypoint
-ENTRYPOINT ["python3", "-m", "frankfurtermcp.server"]
+ENTRYPOINT ["sh", "-c"]
+CMD ["port=${port} PORT=${port} FASTMCP_PORT=${PORT} MCP_SERVER_TRANSPORT=streamable-http python3 -m frankfurtermcp.server"]
