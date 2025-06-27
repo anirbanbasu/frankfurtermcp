@@ -377,7 +377,8 @@ def main():
         Signal handler to shut down the server gracefully.
         """
         # Is this handler necessary since we are not doing anything and uvicorn already handles this?
-        print("[green]Attempting graceful shutdown[/green], please wait...")
+        # Commenting out the following status outputs because it may confuse some MCP clients.
+        # print("[green]Attempting graceful shutdown[/green], please wait...")
         # This is absolutely necessary to exit the program
         sys.exit(0)
 
@@ -385,10 +386,10 @@ def main():
     # TODO: Should we also catch SIGTERM, SIGKILL, etc.? What about Windows?
     signal.signal(signal.SIGINT, sigint_handler)
 
-    print(
-        f"[green]Initiating startup[/green] of [bold]{package_metadata['Name']} {package_metadata['Version']}[/bold], [red]press CTRL+C to exit...[/red]"
-    )
-    # TODO: Should this be forked as a separate process, to which we can send the SIGTERM signal?
+    # Commenting out the following status outputs because it may confuse some MCP clients.
+    # print(
+    #     f"[green]Initiating startup[/green] of [bold]{package_metadata['Name']} {package_metadata['Version']}[/bold], [red]press CTRL+C to exit...[/red]"
+    # )
     transport_type = parse_env(
         EnvironmentVariables.MCP_SERVER_TRANSPORT,
         default_value=EnvironmentVariables.DEFAULT__MCP_SERVER_TRANSPORT,

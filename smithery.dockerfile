@@ -5,9 +5,10 @@ RUN useradd -m -u 1000 app_user
 # Switch to the non-root user
 USER app_user
 # Set the working directory in the container
-WORKDIR /home/app_user/app
-# Install the latest version as available on PyPI
-RUN pip install --upgrade pip && pip install --no-cache-dir frankfurtermcp
+WORKDIR /home/app_user/
+COPY src/ pyproject.toml README.md LICENSE ./
+# Install the latest version from the cloned repository
+RUN pip install --upgrade pip && pip install --no-cache-dir .
 
 # For stdio transport, we need a direct entrypoint
-ENTRYPOINT ["python", "-m", "frankfurtermcp.server"]
+ENTRYPOINT ["python3", "-m", "frankfurtermcp.server"]

@@ -134,13 +134,26 @@ npx @modelcontextprotocol/inspector uv run frankfurtermcp
 
 This will create a local URL at port 6274 with an authentication token, which you can copy and browse to on your browser. Once on the MCP Inspector UI, press _Connect_ to connect to the MCP server. Thereafter, you can explore the tools available on the server.
 
-The server entry to run with `stdio` transport that you can use with systems such as Cursor, Visual Studio Code, and so on is as follows.
+The server entry to run with `stdio` transport that you can use with systems such as Claude Desktop, Visual Studio Code, and so on is as follows.
 
 ```json
 {
     "command": "uv",
     "args": [
-        "run frankfurtermcp"
+        "run",
+        "frankfurtermcp"
+    ]
+}
+```
+
+Instead of having `frankfurtermcp` as the last item in the list of `args`, you may need to specify the full path to the script, e.g., _WD_`/.venv/bin/frankfurtermcp`. Likewise, instead of using `uv`, you could also have the following JSON configuration with the path properly substituted for `python3.12`, for instance such as _WD_`/.venv/bin/python3.12`. 
+
+```json
+{
+    "command": "python3.12",
+    "args": [
+        "-m",
+        "frankfurtermcp.server"
     ]
 }
 ```
