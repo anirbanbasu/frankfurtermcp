@@ -17,7 +17,7 @@ attrs==25.3.0
     #   referencing
 authlib==1.6.0
     # via fastmcp
-certifi==2025.6.15
+certifi==2025.7.14
     # via
     #   httpcore
     #   httpx
