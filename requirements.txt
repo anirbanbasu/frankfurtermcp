@@ -34,7 +34,7 @@ colorama==0.4.6
     #   icecream
 cryptography==45.0.5
     # via authlib
-cyclopts==3.22.2
+cyclopts==3.22.3
     # via fastmcp
 dnspython==2.7.0
     # via email-validator
