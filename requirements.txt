@@ -48,7 +48,7 @@ exceptiongroup==1.3.0
     # via fastmcp
 executing==2.2.0
     # via icecream
-fastmcp==2.10.6
+fastmcp==2.11.2
     # via frankfurtermcp
 h11==0.16.0
     # via
