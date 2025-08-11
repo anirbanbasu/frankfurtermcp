@@ -32,7 +32,7 @@ colorama==0.4.6
     # via
     #   click
     #   icecream
-cryptography==45.0.5
+cryptography==45.0.6
     # via authlib
 cyclopts==3.22.5
     # via fastmcp
