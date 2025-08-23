@@ -13,6 +13,15 @@ _If your objective is to use the tools available on this MCP server, please refe
 
 The directory where you clone this repository will be referred to as the _working directory_ or _WD_ hereinafter.
 
+### Installing via Smithery
+
+To install FrankfurterMCP for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@anirbanbasu/frankfurtermcp):
+
+```bash
+npx -y @smithery/cli install @anirbanbasu/frankfurtermcp --client claude
+```
+
+### Installing Manually
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/). To install the project with its minimal dependencies in a virtual environment, run the following in the _WD_. To install all non-essential dependencies (_which are required for developing and testing_), replace the `--no-dev` with the `--all-groups` flag in the following command.
 
 ```bash
@@ -42,7 +51,7 @@ The underlying HTTP client also respects some environment variables, as document
 The following sub-sections illustrate how to run the Frankfurter MCP as a server and how to access it from MCP clients.
 
 ## Server
-While running the server, you have the choice to use `stdio` transport or HTTP options (`sse` or the newer `streamable-http`).
+While running the server, you have the choice to use `stdio` transport or HTTP options (`sse` or `streamable-http`).
 
 Using default settings and `MCP_SERVER_TRANSPORT` set to `sse` or `streamable-http`, the MCP endpoint will be available over HTTP at [http://localhost:8000/sse](http://localhost:8000/sse) for the Server Sent Events (SSE) transport, or [http://localhost:8000/mcp](http://localhost:8000/mcp) for the streamable HTTP transport.
 
