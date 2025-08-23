@@ -1,11 +1,12 @@
-# Check reference at https://smithery.ai/docs/build/project-config/smithery-yaml and https://smithery.ai/docs/build/deployments/custom-container
-runtime: "container"
+# Smithery configuration file: https://smithery.ai/docs/build/project-config
+
 build:
-  dockerfile: "smithery.dockerfile"
-  dockerBuildPath: "."
+  dockerfile: smithery.dockerfile
+  dockerBuildPath: .
+runtime: container
 startCommand:
-  type: "http"  # Changed from stdio
-  configSchema: {}
+  type: http
+  configSchema:
+    # JSON Schema defining the configuration options for the MCP.
+    {}
   exampleConfig: {}
-env:
-  PORT: 8081
