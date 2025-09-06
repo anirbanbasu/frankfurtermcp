@@ -1,4 +1,4 @@
-from frankfurtermcp.common import EnvironmentVariables, AppMetadata
+from frankfurtermcp.common import EnvVar, AppMetadata
 from frankfurtermcp.model import CurrencyConversionResponse, ResponseMetadata
 
 
@@ -100,16 +100,14 @@ class TestDataModels:
 
         data = {
             "version": AppMetadata.package_metadata["Version"],
-            "api_url": EnvironmentVariables.DEFAULT__FRANKFURTER_API_URL,
+            "api_url": EnvVar.DEFAULT__FRANKFURTER_API_URL,
             "api_status_code": 200,
             "api_bytes_downloaded": 512,
             "api_elapsed_time": 150000,  # in microseconds
         }
         response = ResponseMetadata(**data)
         assert response.version == AppMetadata.package_metadata["Version"]
-        assert (
-            str(response.api_url) == EnvironmentVariables.DEFAULT__FRANKFURTER_API_URL
-        )
+        assert str(response.api_url) == EnvVar.DEFAULT__FRANKFURTER_API_URL
         assert response.api_status_code == 200
         assert response.api_bytes_downloaded == 512
         assert response.api_elapsed_time == 150000
@@ -121,7 +119,7 @@ class TestDataModels:
 
         data = {
             "version": AppMetadata.package_metadata["Version"],
-            "api_url": EnvironmentVariables.DEFAULT__FRANKFURTER_API_URL,
+            "api_url": EnvVar.DEFAULT__FRANKFURTER_API_URL,
             "api_status_code": 200,
             "api_bytes_downloaded": -512,  # Invalid negative bytes downloaded
             "api_elapsed_time": -150000,  # Invalid negative elapsed time

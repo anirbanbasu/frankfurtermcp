@@ -12,7 +12,7 @@ import httpx
 from mcp.types import TextContent
 from pydantic import BaseModel
 
-from frankfurtermcp.common import AppMetadata, EnvironmentVariables
+from frankfurtermcp.common import AppMetadata, EnvVar
 from frankfurtermcp.model import ResponseMetadata
 
 from frankfurtermcp import env
@@ -36,8 +36,8 @@ class MCPMixin:
     prompts: ClassVar[List[Dict[str, Any]]] = []
 
     frankfurter_api_url: ClassVar[str] = env.str(
-        name=EnvironmentVariables.FRANKFURTER_API_URL,
-        default=EnvironmentVariables.DEFAULT__FRANKFURTER_API_URL,
+        name=EnvVar.FRANKFURTER_API_URL,
+        default=EnvVar.DEFAULT__FRANKFURTER_API_URL,
     )
 
     def register_features(self, mcp: FastMCP) -> FastMCP:
@@ -50,7 +50,6 @@ class MCPMixin:
         Returns:
             FastMCP: The FastMCP instance with registered features.
         """
-        print(self.frankfurter_api_url)
         # Register tools
         for tool in self.tools:
             assert "fn" in tool, "Tool metadata must include the 'fn' key."
@@ -86,8 +85,8 @@ class MCPMixin:
         response: Any,
         http_response: httpx.Response,
         include_metadata: bool = env.bool(
-            name=EnvironmentVariables.MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE,
-            default=EnvironmentVariables.DEFAULT__MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE,
+            name=EnvVar.MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE,
+            default=EnvVar.DEFAULT__MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE,
         ),
     ) -> TextContent:
         """
@@ -142,8 +141,8 @@ class HTTPHelperMixin:
         Obtain an HTTPX client for making requests.
         """
         verify = env.bool(
-            name=EnvironmentVariables.HTTPX_VERIFY_SSL,
-            default=EnvironmentVariables.DEFAULT__HTTPX_VERIFY_SSL,
+            name=EnvVar.HTTPX_VERIFY_SSL,
+            default=EnvVar.DEFAULT__HTTPX_VERIFY_SSL,
         )
         if verify is False:
             logging.warning(
@@ -158,8 +157,8 @@ class HTTPHelperMixin:
             follow_redirects=True,
             trust_env=True,
             timeout=env.float(
-                name=EnvironmentVariables.HTTPX_TIMEOUT,
-                default=EnvironmentVariables.DEFAULT__HTTPX_TIMEOUT,
+                name=EnvVar.HTTPX_TIMEOUT,
+                default=EnvVar.DEFAULT__HTTPX_TIMEOUT,
             ),
         )
         return client

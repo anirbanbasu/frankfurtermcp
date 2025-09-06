@@ -2,7 +2,7 @@ import logging
 from environs import Env
 from rich.logging import RichHandler
 
-from frankfurtermcp.common import EnvironmentVariables
+from frankfurtermcp.common import EnvVar
 
 
 try:
@@ -18,9 +18,7 @@ env = Env()
 env.read_env()
 
 logging.basicConfig(
-    level=env.str(
-        EnvironmentVariables.LOG_LEVEL, default=EnvironmentVariables.DEFAULT__LOG_LEVEL
-    ).upper(),
+    level=env.str(EnvVar.LOG_LEVEL, default=EnvVar.DEFAULT__LOG_LEVEL).upper(),
     format="%(message)s",
     datefmt="[%X]",
     handlers=[

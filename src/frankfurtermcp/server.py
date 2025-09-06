@@ -11,7 +11,7 @@ from marshmallow.validate import OneOf
 
 from pydantic import Field, PositiveFloat
 from pydantic_extra_types.currency_code import ISO4217
-from frankfurtermcp.common import EnvironmentVariables
+from frankfurtermcp.common import EnvVar
 
 from frankfurtermcp.common import AppMetadata
 from frankfurtermcp.mixin import HTTPHelperMixin, MCPMixin
@@ -400,20 +400,20 @@ def main():  # pragma: no cover
     try:
         mcp_app = app()
         transport_type = env.str(
-            name=EnvironmentVariables.MCP_SERVER_TRANSPORT,
-            default=EnvironmentVariables.DEFAULT__MCP_SERVER_TRANSPORT,
-            validate=OneOf(EnvironmentVariables.ALLOWED__MCP_SERVER_TRANSPORT),
+            name=EnvVar.MCP_SERVER_TRANSPORT,
+            default=EnvVar.DEFAULT__MCP_SERVER_TRANSPORT,
+            validate=OneOf(EnvVar.ALLOWED__MCP_SERVER_TRANSPORT),
         )
         (
             mcp_app.run(
                 transport=transport_type,
                 host=env.str(
-                    name=EnvironmentVariables.FASTMCP_HOST,
-                    default=EnvironmentVariables.DEFAULT__FASTMCP_HOST,
+                    name=EnvVar.FASTMCP_HOST,
+                    default=EnvVar.DEFAULT__FASTMCP_HOST,
                 ),
                 port=env.int(
-                    name=EnvironmentVariables.FASTMCP_PORT,
-                    default=EnvironmentVariables.DEFAULT__FASTMCP_PORT,
+                    name=EnvVar.FASTMCP_PORT,
+                    default=EnvVar.DEFAULT__FASTMCP_PORT,
                 ),
                 uvicorn_config={
                     "timeout_graceful_shutdown": 5,  # seconds

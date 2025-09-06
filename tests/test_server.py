@@ -1,9 +1,9 @@
 import json
 import asyncio
 import logging
-from fastmcp import Client
+from fastmcp import Client, FastMCP
 
-from frankfurtermcp.server import app as frankfurtermcp_app
+from frankfurtermcp.server import FrankfurterMCP
 import pytest
 
 logger = logging.getLogger(__name__)
@@ -12,12 +12,23 @@ logger = logging.getLogger(__name__)
 class TestMCPServer:
     @classmethod
     @pytest.fixture(scope="class", autouse=True)
-    def mcp_client(cls):
+    def mcp_server(cls):
+        """
+        Fixture to register features in an MCP server.
+        """
+        server = FastMCP()
+        mcp_obj = FrankfurterMCP()
+        server_with_features = mcp_obj.register_features(server)
+        return server_with_features
+
+    @classmethod
+    @pytest.fixture(scope="class", autouse=True)
+    def mcp_client(cls, mcp_server):
         """
         Fixture to create a client for the MCP server.
         """
         mcp_client = Client(
-            transport=frankfurtermcp_app(),
+            transport=mcp_server,
             timeout=60,
         )
         return mcp_client
