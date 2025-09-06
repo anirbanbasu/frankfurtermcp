@@ -72,7 +72,7 @@ class TestDataModels:
 
     def test_currency_conversion_response_invalid_date(self):
         """
-        Test the CurrencyConversionResponse data model to ensure that it raises a validation error for invalid currency codes.
+        Test the CurrencyConversionResponse data model to ensure that it raises a validation error for invalid date format.
         """
         data = {
             "from_currency": "GBP",
