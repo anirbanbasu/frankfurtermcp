@@ -21,7 +21,7 @@ uv sync --no-dev
 
 ## Environment variables
 
-Following is a list of environment variables that can be used to configure the application. A template of environment variables is provided in the file `.env.template`.
+Following is a list of environment variables that can be used to configure the application. A template of environment variables is provided in the file `.env.template`. _Note that the default values listed in the table below are not always the same as those in the `.env.template` file_.
 
 The following environment variables can be specified, prefixed with `FASTMCP_`: `HOST`, `PORT`, `DEBUG` and `LOG_LEVEL`. See [global configuration options](https://gofastmcp.com/servers/server#global-settings) for FastMCP. Note that `on_duplicate_` prefixed options specified as environment variables _will be ignored_.
 
@@ -29,13 +29,13 @@ The underlying HTTP client also respects some environment variables, as document
 
 | Variable |  [Default value] and description   |
 |--------------|----------------|
-| `LOG_LEVEL` | [INFO] The level for logging. See valid values at [Python logging documentation](https://docs.python.org/3/library/logging.html#logging-levels). |
+| `LOG_LEVEL` | [INFO] The level for logging. Changing this level also affects the log output of other dependent libraries that may use the same environment variable. See valid values at [Python logging documentation](https://docs.python.org/3/library/logging.html#logging-levels). |
 | `HTTPX_TIMEOUT` | [5.0] The time for the underlying HTTP client to wait, in seconds, for a response from the Frankfurter API. |
 | `HTTPX_VERIFY_SSL` | [True] This variable can be set to False to turn off SSL certificate verification, if, for instance, you are using a proxy server with a self-signed certificate. However, setting this to False _is advised against_: instead, use the `SSL_CERT_FILE` and `SSL_CERT_DIR` variables to properly configure self-signed certificates. |
-| `FAST_MCP_HOST` | [0.0.0.0] This variable specifies which host the MCP server must bind to unless the server transport (see below) is set to `stdio`. |
+| `FAST_MCP_HOST` | [localhost] This variable specifies which host the MCP server must bind to unless the server transport (see below) is set to `stdio`. |
 | `FAST_MCP_PORT` | [8000] This variable specifies which port the MCP server must listen on unless the server transport (see below) is set to `stdio`. |
-| `MCP_SERVER_TRANSPORT` | [stdio] The acceptable options are `stdio`, `sse` or `streamable-http`. However, in the `.env.template`, the default value is set to `streamable-http`. |
-| `MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE` | [True] An _experimental feature_ to include additional metadata to the MCP type `TextContent` that wraps the response data from each tool call. The additional metadata, for example, will include (as of June 21, 2025) the API URL of the Frankfurter server that is used to obtain the responses. |
+| `MCP_SERVER_TRANSPORT` | [stdio] The acceptable options are `stdio`, `sse` or `streamable-http`. However, in the `.env.template`, the default value is set to `stdio`. |
+| `MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE` | [True] This specifies if additional metadata will be included with the MCP type `TextContent` that wraps the response data from each tool call. The additional metadata, for example, will include the API URL of the Frankfurter server, amongst others, that is used to obtain the responses. |
 | `FRANKFURTER_API_URL` | [https://api.frankfurter.dev/v1] If you are [self-hosting the Frankfurter API](https://hub.docker.com/r/lineofflight/frankfurter), you should change this to the API endpoint address of your deployment. |
 
 # Usage
@@ -61,7 +61,7 @@ uv run frankfurtermcp
 
 ### Server with `pip` from PyPI package
 
-Add this package from PyPI using `pip` in a virtual environment (possibly managed by `conda` or `pyenv`) and then start the server by running the following.
+Add this package from PyPI using `pip` in a virtual environment (possibly managed by `uv`, `pyenv` or `conda`) and then start the server by running the following.
 
 _Optional_: Add a `.env` file with the contents of the `.env.template` file if you wish to modify the default values of the aforementioned environment variables. Or, on your shell, you can export the environment variables that you wish to modify.
 
@@ -174,14 +174,29 @@ pre-commit install
 ```
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
-# Testing
+# Testing and coverage
 
 To run the provided test cases, execute the following. Add the flag `--capture=tee-sys` to the command to display further console output.
 
-_Note that for the tests to succeed, the environment variable `MCP_SERVER_TRANSPORT` must be set to either `sse` or `streamable-http`. If not set, it will default to `stdio` and the tests will fail_.
+```bash
+uv run --group test pytest tests/
+```
+
+There is a handy testing script _WD_`/run-tests.sh`, which will run all the tests and generate a coverage report as follows. It can also accept arguments and parameters to be passed to `pytest`, such as `-k` for filtering the tests to run. If all tests are run, the generated coverage report may look like the one below.
 
 ```bash
-MCP_SERVER_TRANSPORT=streamable-http uv run --group test pytest tests/
+Name                             Stmts   Miss  Cover
+----------------------------------------------------
+src/frankfurtermcp/__init__.py      10      0   100%
+src/frankfurtermcp/common.py        23      0   100%
+src/frankfurtermcp/mixin.py         52      4    92%
+src/frankfurtermcp/model.py         17      0   100%
+src/frankfurtermcp/server.py       111     20    82%
+tests/__init__.py                    0      0   100%
+tests/test_data_models.py           60      0   100%
+tests/test_server.py                71      0   100%
+----------------------------------------------------
+TOTAL                              344     24    93%
 ```
 
 # License
