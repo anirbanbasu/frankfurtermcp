@@ -29,6 +29,7 @@ The underlying HTTP client also respects some environment variables, as document
 
 | Variable |  [Default value] and description   |
 |--------------|----------------|
+| `LOG_LEVEL` | [INFO] The level for logging. See valid values at [Python logging documentation](https://docs.python.org/3/library/logging.html#logging-levels). |
 | `HTTPX_TIMEOUT` | [5.0] The time for the underlying HTTP client to wait, in seconds, for a response from the Frankfurter API. |
 | `HTTPX_VERIFY_SSL` | [True] This variable can be set to False to turn off SSL certificate verification, if, for instance, you are using a proxy server with a self-signed certificate. However, setting this to False _is advised against_: instead, use the `SSL_CERT_FILE` and `SSL_CERT_DIR` variables to properly configure self-signed certificates. |
 | `FAST_MCP_HOST` | [0.0.0.0] This variable specifies which host the MCP server must bind to unless the server transport (see below) is set to `stdio`. |
@@ -88,10 +89,6 @@ docker start frankfurtermcp-container
 
 Upon successful build and container start, the MCP server will be available over HTTP at [http://localhost:8000/sse](http://localhost:8000/sse) for the Server Sent Events (SSE) transport, or [http://localhost:8000/mcp](http://localhost:8000/mcp) for the streamable HTTP transport.
 
-### Dynamic mounting with FastMCP
-
-To see how to use the MCP server by mounting it dynamically with [FastMCP](https://gofastmcp.com/) as part of your own MCP server, check the file [`src/frankfurtermcp/composition.py`](https://github.com/anirbanbasu/frankfurtermcp/blob/master/src/frankfurtermcp/composition.py).
-
 ### Cloud hosted servers
 
 The currently available cloud hosted options are as follows.
@@ -103,7 +100,7 @@ The currently available cloud hosted options are as follows.
 
 ## Client access
 
-This sub-section explains ways for a client to connect and test the FrankfurterMCP server. A command-line interface (CLI) is also provided for testing, which is explained in a later sub-section.
+This sub-section explains ways for a client to connect and test the FrankfurterMCP server.
 
 ### The official MCP visual inspector
 
@@ -150,9 +147,13 @@ Instead of having `frankfurtermcp` as the last item in the list of `args`, you m
 }
 ```
 
-# List of available tools
+# List of available MCP features
 
-The following table lists the names of the tools as exposed by the FrankfurterMCP server. It does not list the tool(s) exposed through [the composition example](https://github.com/anirbanbasu/frankfurtermcp/blob/master/src/frankfurtermcp/composition.py). The descriptions shown here are for documentation purposes, which may differ from the actual descriptions exposed over the model context protocol.
+FrankfurterMCP has the following MCP features.
+
+## Tools
+
+The following table lists the names of the tools as exposed by the FrankfurterMCP server. The descriptions shown here are for documentation purposes, which may differ from the actual descriptions exposed over the model context protocol.
 
 | Name         |  Description   |
 |--------------|----------------|
@@ -163,25 +164,6 @@ The following table lists the names of the tools as exposed by the FrankfurterMC
 | `convert_currency_specific_date` | Convert an amount from one currency to another using the exchange rates for a specific date. |
 
 The required and optional arguments for each tool are not listed in the following table for brevity but are available to the MCP client over the protocol.
-
-## FrankfurterMCP command-line interface (CLI)
-You may also use the CLI provided with FrankfurterMCP to explore the tools of the MCP server. For example, to see the detailed schema for a particular tool, you can do so using the `tools-info` commmand from the command line interface. The command line interface is available as the script `cli`. You can invoke its help to see the available commands as follows.
-
-```bash
-uv run cli --help
-```
-
-This will produce an output similar to the screenshot below.
-
-![cli-help-screenshot](https://raw.githubusercontent.com/anirbanbasu/frankfurtermcp/master/screenshots/cli-help.png "FrankfurterMCP CLI help")
-
-Before calling the `tools-info` command, you **MUST** have the server running in `streamable-http` or `sse` transport mode, preferably locally, e.g., by invoking `MCP_SERVER_TRANSPORT=streamable-http uv run frankfurtermcp`. A successful call of the `tools-info` command will generate an output similar to the screenshot shown below.
-
-![cli-tools-info-screenshot](https://raw.githubusercontent.com/anirbanbasu/frankfurtermcp/master/screenshots/cli-tools-info.png "FrankfurterMCP CLI tools-info")
-
-Alternative to the `tools-info` command, you can also run call the `llamaindex-tools-list` command to display the names of the tools without the respective function schemas. This functionality is provided only to optionally demonstrate that the LlamaIndex MCP client can read the tools list from this MCP server. In order for this to function, you must install LlamaIndex MCP client by calling `uv sync --extra opt`. The output of calling this command will look like the following.
-
-![cli-llamaindex-tools-list-screenshot](https://raw.githubusercontent.com/anirbanbasu/frankfurtermcp/master/screenshots/cli-llamaindex-tools-list.png "FrankfurterMCP CLI llamaindex-tools-list")
 
 # Contributing
 
@@ -212,9 +194,7 @@ Following is a table of some updates regarding the project status. Note that the
 
 | Date     |  Status   |  Notes or observations   |
 |----------|:-------------:|----------------------|
+| September 6, 2025 |  active |  Code refactoring and cleanup. |
 | June 27, 2025 |  active |  Successful remote deployments on Glama.AI and Smithery.AI. |
-| June 13, 2025 |  active |  Added LlamaIndex tool listing for demonstration only. (The `--all-extras` flag is necessary to install LlamaIndex, which is not installed by default.) |
-| June 9, 2025 |  active |  Added containerisation, support for self-signed, proxies. |
-| June 8, 2025 |  active |  Added dynamic composition. |
-| June 7, 2025 |  active |  Added tools to cover all the functionalities of the Frankfurter API. |
-| June 7, 2025 |  active |  Project started.  |
+| June 9, 2025 |  active |  Added containerisation, support for self-signed proxies. |
+| June 7, 2025 |  active |  Project started. Added tools to cover all the functionalities of the Frankfurter API. |

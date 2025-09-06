@@ -1,74 +1,36 @@
 import json
-import multiprocessing
 import asyncio
-import time
+import logging
 from fastmcp import Client
 
-from mcp.types import TextContent
-
-from frankfurtermcp.server import main as mcp_server_composition
-from frankfurtermcp.common import get_nonstdio_mcp_client
+from frankfurtermcp.server import app as frankfurtermcp_app
 import pytest
 
-
-@pytest.fixture(scope="module")
-def mcp_client():
-    """
-    Fixture to create a client for the MCP server.
-    """
-    return get_nonstdio_mcp_client()
-
-
-@pytest.fixture(scope="module", autouse=True)
-def mcp_server():
-    print("[fixture] Starting MCP server process")
-    proc = multiprocessing.Process(
-        target=mcp_server_composition,
-    )
-    proc.start()
-
-    async def wait_for_server(timeout: float = 5.0) -> bool:
-        """
-        Wait for the MCP server to start and be ready to accept connections.
-        """
-        client = get_nonstdio_mcp_client()
-        ping_result = False
-        start = time.time()
-        while (time.time() - start) < timeout and not ping_result:
-            try:
-                async with client:
-                    ping_result = await client.ping()
-            except Exception:
-                # Don't panic, give it a bit more time!
-                time.sleep(0.1)
-        return ping_result
-
-    try:
-        # Check connection to the server
-        if not asyncio.run(wait_for_server()):
-            raise RuntimeError(
-                "The MCP server process did not start in time or is not responding."
-            )
-        yield  # Run tests now
-    finally:
-        print("[fixture] Stopping MCP server process")
-        if proc.is_alive():
-            proc.terminate()
-            proc.join()
+logger = logging.getLogger(__name__)
 
 
 class TestMCPServer:
+    @classmethod
+    @pytest.fixture(scope="class", autouse=True)
+    def mcp_client(cls):
+        """
+        Fixture to create a client for the MCP server.
+        """
+        mcp_client = Client(
+            transport=frankfurtermcp_app(),
+            timeout=60,
+        )
+        return mcp_client
+
     async def call_tool(self, tool_name: str, mcp_client: Client, **kwargs):
         """
         Helper method to call a tool on the MCP server.
         """
+        logger.debug(f"Calling tool '{tool_name}' with arguments: {kwargs}")
         async with mcp_client:
             result = await mcp_client.call_tool(tool_name, arguments=kwargs)
             await mcp_client.close()
-        for r in result.content:
-            # Log experimental metadata from TextContent responses
-            if isinstance(r, TextContent) and hasattr(r, "meta"):
-                print(f"{tool_name} response metadata: {r.meta}")
+        logger.debug(f"Tool '{tool_name}' returned result: {result}")
         return result
 
     def test_get_supported_currencies(self, mcp_client):
@@ -83,7 +45,6 @@ class TestMCPServer:
             )
         )
         json_result: dict = json.loads(response.content[0].text)
-        print(f"{test_method} response: {json_result}")
         assert len(json_result.keys()) > 0, "Expected non-empty list of currencies"
         assert all(
             (isinstance(code, str) and len(code) == 3) for code in json_result.keys()
@@ -104,7 +65,7 @@ class TestMCPServer:
             )
         )
         json_result: dict = json.loads(response.content[0].text)
-        print(f"{test_method} response: {json_result}")
+        logger.info(f"{test_method} response: {json_result}")
         assert isinstance(json_result["converted_amount"], float), (
             "Expected float value for converted amount"
         )
@@ -126,7 +87,6 @@ class TestMCPServer:
             )
         )
         json_result: dict = json.loads(response.content[0].text)
-        print(f"{test_method} response: {json_result}")
         assert len(json_result["rates"].keys()) > 0, (
             "Expected non-empty list of currency rates"
         )
@@ -151,7 +111,6 @@ class TestMCPServer:
             )
         )
         json_result: dict = json.loads(response.content[0].text)
-        print(f"{test_method} response: {json_result}")
         assert all(
             len(rates_for_date) > 0
             for _, rates_for_date in json_result["rates"].items()
@@ -178,7 +137,6 @@ class TestMCPServer:
             )
         )
         json_result: dict = json.loads(response.content[0].text)
-        print(f"{test_method} response: {json_result}")
         assert len(json_result["rates"].keys()) > 0, (
             "Expected non-empty list of currency rates"
         )
@@ -203,7 +161,6 @@ class TestMCPServer:
             )
         )
         json_result: dict = json.loads(response.content[0].text)
-        print(f"{test_method} response: {json_result}")
         assert all(
             len(rates_for_date) > 0
             for _, rates_for_date in json_result["rates"].items()
