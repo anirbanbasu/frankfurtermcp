@@ -6,6 +6,7 @@ from fastmcp import Client, FastMCP
 from frankfurtermcp.server import FrankfurterMCP
 import pytest
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -84,18 +85,24 @@ class TestMCPServer:
             "The exchange rate for GBP to JPY should be greater than 1.0"
         )
 
-    def test_get_latest_exchange_rates(self, mcp_client):
+    def test_get_latest_exchange_rates(self, mcp_client, benchmark):
         """
         Test the get_latest_exchange_rates function to ensure that it returns the list of latest rates with other currencies.
         """
         test_method = "get_latest_exchange_rates"
-        response = asyncio.run(
-            self.call_tool(
-                tool_name=test_method,
-                mcp_client=mcp_client,
-                base_currency="JPY",
-                symbols=["EUR", "GBP", "CHF", "NZD"],
+
+        def bench_func():
+            return asyncio.run(
+                self.call_tool(
+                    tool_name=test_method,
+                    mcp_client=mcp_client,
+                    base_currency="JPY",
+                    symbols=["EUR", "GBP", "CHF", "NZD"],
+                )
             )
+
+        response = benchmark.pedantic(
+            bench_func, iterations=1, rounds=5, warmup_rounds=1
         )
         json_result: dict = json.loads(response.content[0].text)
         assert len(json_result["rates"].keys()) > 0, (
@@ -106,20 +113,26 @@ class TestMCPServer:
             for code in json_result["rates"].keys()
         ), "All currency codes for exchange rates should be 3-character strings"
 
-    def test_get_historical_exchange_rates(self, mcp_client):
+    def test_get_historical_exchange_rates(self, mcp_client, benchmark):
         """
         Test the get_historical_exchange_rates function to ensure that it returns the list of historical rates with other currencies.
         """
         test_method = "get_historical_exchange_rates"
-        response = asyncio.run(
-            self.call_tool(
-                tool_name=test_method,
-                mcp_client=mcp_client,
-                base_currency="JPY",
-                start_date="2025-06-01",
-                end_date="2025-06-19",
-                symbols=["EUR", "GBP", "CHF", "NZD"],
+
+        def bench_func():
+            return asyncio.run(
+                self.call_tool(
+                    tool_name=test_method,
+                    mcp_client=mcp_client,
+                    base_currency="JPY",
+                    start_date="2025-06-01",
+                    end_date="2025-06-19",
+                    symbols=["EUR", "GBP", "CHF", "NZD"],
+                )
             )
+
+        response = benchmark.pedantic(
+            bench_func, iterations=1, rounds=5, warmup_rounds=1
         )
         json_result: dict = json.loads(response.content[0].text)
         assert all(
