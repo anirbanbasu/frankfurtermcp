@@ -1,6 +1,6 @@
 [project]
 name = "frankfurtermcp"
-version = "0.4.0"
+version = "0.4.0.post1"
 description = "A MCP server for currency exchange rates and currency conversion using the Frankfurter API."
 readme = {file = "README.md", content-type = "text/markdown"}
 license = "MIT"
@@ -9,7 +9,7 @@ authors = [
     { name = "Anirban Basu", email = "anirbanbasu@users.noreply.github.com" }
 ]
 keywords = ["finance", "mcp", "currency-exchange-rates", "currency-converter", "frankfurter-api", "model-context-protocol", "mcp-server", "fastmcp", "model-context-protocol-server", "mcp-composition"]
-requires-python = ">=3.12"
+requires-python = ">=3.12,<3.14"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
