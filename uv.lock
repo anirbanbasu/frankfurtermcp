@@ -482,8 +482,6 @@ dev = [
 test = [
     { name = "coverage" },
     { name = "pytest" },
-]
-tests = [
     { name = "pytest-benchmark" },
 ]
 
@@ -505,8 +503,8 @@ dev = [
 test = [
     { name = "coverage", specifier = ">=7.10.6" },
     { name = "pytest", specifier = ">=8.4.0" },
+    { name = "pytest-benchmark", specifier = ">=5.1.0" },
 ]
-tests = [{ name = "pytest-benchmark", specifier = ">=5.1.0" }]
 
 [[package]]
 name = "h11"

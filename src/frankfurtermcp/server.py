@@ -101,7 +101,7 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
     def _get_latest_exchange_rates(
         self,
         base_currency: Union[str, None] = None,
-        symbols: Union[Tuple[str], None] = None,
+        symbols: Union[Tuple[str, ...], None] = None,
     ):
         """
         Internal function to get the latest exchange rates.
@@ -133,7 +133,7 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
         start_date: Union[str, None] = None,
         end_date: Union[str, None] = None,
         base_currency: Union[str, None] = None,
-        symbols: Union[Tuple[str], None] = None,
+        symbols: Union[Tuple[str, ...], None] = None,
     ):
         """
         Internal function to get historical exchange rates.

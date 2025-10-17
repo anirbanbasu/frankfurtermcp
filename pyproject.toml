@@ -48,7 +48,5 @@ dev = [
 test = [
     "coverage>=7.10.6",
     "pytest>=8.4.0",
-]
-tests = [
     "pytest-benchmark>=5.1.0",
 ]
