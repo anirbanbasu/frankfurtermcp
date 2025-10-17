@@ -1,6 +1,6 @@
 [project]
 name = "frankfurtermcp"
-version = "0.3.6"
+version = "0.4.0"
 description = "A MCP server for currency exchange rates and currency conversion using the Frankfurter API."
 readme = {file = "README.md", content-type = "text/markdown"}
 license = "MIT"
@@ -20,10 +20,12 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
+    "cachetools>=6.2.1",
     "environs>=14.3.0",
     "fastmcp>=2.8.0",
     "pycountry>=24.6.1",
     "pydantic-extra-types>=2.10.5",
+    "types-cachetools>=6.2.0.20250827",
 ]
 
 [project.urls]
@@ -46,4 +48,5 @@ dev = [
 test = [
     "coverage>=7.10.6",
     "pytest>=8.4.0",
+    "pytest-benchmark>=5.1.0",
 ]

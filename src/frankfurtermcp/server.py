@@ -1,21 +1,22 @@
 from datetime import date
 import logging
 import sys
-from typing import Annotated, List, Optional, Union
+import threading
+from typing import Annotated, List, Optional, Tuple, Union
 import httpx
 
 from fastmcp import FastMCP, Context
 
-from frankfurtermcp import env
-from marshmallow.validate import OneOf
 
 from pydantic import Field, PositiveFloat
 from pydantic_extra_types.currency_code import ISO4217
-from frankfurtermcp.common import EnvVar
+from frankfurtermcp import EnvVar
 
 from frankfurtermcp.common import AppMetadata
 from frankfurtermcp.mixin import HTTPHelperMixin, MCPMixin
 from frankfurtermcp.model import CurrencyConversionResponse
+
+from cachetools import cached, TTLCache, LRUCache  # type: ignore
 
 logger = logging.getLogger(__name__)
 
@@ -93,10 +94,14 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
                 f"Failed to fetch supported currencies from {self.frankfurter_api_url}. {e}"
             )
 
+    @cached(
+        cache=TTLCache(EnvVar.TTL_CACHE_MAX_SIZE, EnvVar.TTL_CACHE_TTL_SECONDS),
+        lock=threading.Lock(),
+    )
     def _get_latest_exchange_rates(
         self,
         base_currency: Union[str, None] = None,
-        symbols: Union[List[str], None] = None,
+        symbols: Union[Tuple[str, ...], None] = None,
     ):
         """
         Internal function to get the latest exchange rates.
@@ -121,13 +126,14 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
                 f"Failed to fetch latest exchange rates from {self.frankfurter_api_url}. {e}"
             )
 
+    @cached(cache=LRUCache(EnvVar.LRU_CACHE_MAX_SIZE), lock=threading.Lock())
     def _get_historical_exchange_rates(
         self,
         specific_date: Union[str, None] = None,
         start_date: Union[str, None] = None,
         end_date: Union[str, None] = None,
         base_currency: Union[str, None] = None,
-        symbols: Union[List[str], None] = None,
+        symbols: Union[Tuple[str, ...], None] = None,
     ):
         """
         Internal function to get historical exchange rates.
@@ -196,7 +202,7 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
         )
         result, http_response = self._get_latest_exchange_rates(
             base_currency=base_currency,
-            symbols=symbols,
+            symbols=tuple(symbols) if symbols else None,
         )
         return self.get_response_text_content(
             response=result, http_response=http_response
@@ -229,7 +235,7 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
         )
         latest_rates, http_response = self._get_latest_exchange_rates(
             base_currency=from_currency,
-            symbols=[to_currency],
+            symbols=tuple([to_currency]),
         )
         await ctx.info(f"Converting {amount} of {from_currency} to {to_currency}")
         if not latest_rates or "rates" not in latest_rates:
@@ -310,7 +316,7 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
             start_date=start_date.isoformat() if start_date else None,
             end_date=end_date.isoformat() if end_date else None,
             base_currency=base_currency,
-            symbols=symbols,
+            symbols=tuple(symbols) if symbols else None,
         )
         await ctx.info(
             f"Historical exchange rates fetched for {len(result.get('rates', []))} dates."
@@ -355,7 +361,7 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
         date_specific_rates, http_response = self._get_historical_exchange_rates(
             specific_date=specific_date.isoformat(),
             base_currency=from_currency,
-            symbols=[to_currency],
+            symbols=tuple([to_currency]),
         )
         await ctx.info(
             f"Converting {amount} of {from_currency} to {to_currency} on {specific_date}"
@@ -399,22 +405,12 @@ def app() -> FastMCP:
 def main():  # pragma: no cover
     try:
         mcp_app = app()
-        transport_type = env.str(
-            name=EnvVar.MCP_SERVER_TRANSPORT,
-            default=EnvVar.DEFAULT__MCP_SERVER_TRANSPORT,
-            validate=OneOf(EnvVar.ALLOWED__MCP_SERVER_TRANSPORT),
-        )
+        transport_type = EnvVar.MCP_SERVER_TRANSPORT
         (
             mcp_app.run(
                 transport=transport_type,
-                host=env.str(
-                    name=EnvVar.FASTMCP_HOST,
-                    default=EnvVar.DEFAULT__FASTMCP_HOST,
-                ),
-                port=env.int(
-                    name=EnvVar.FASTMCP_PORT,
-                    default=EnvVar.DEFAULT__FASTMCP_PORT,
-                ),
+                host=EnvVar.FASTMCP_HOST,
+                port=EnvVar.FASTMCP_PORT,
                 uvicorn_config={
                     "timeout_graceful_shutdown": 5,  # seconds
                 },

@@ -12,10 +12,10 @@ import httpx
 from mcp.types import TextContent
 from pydantic import BaseModel
 
-from frankfurtermcp.common import AppMetadata, EnvVar
+from frankfurtermcp import EnvVar
+from frankfurtermcp.common import AppMetadata
 from frankfurtermcp.model import ResponseMetadata
 
-from frankfurtermcp import env
 
 logger = logging.getLogger(__name__)
 
@@ -35,10 +35,7 @@ class MCPMixin:
     # rest is arbitrary metadata relevant to FastMCP.
     prompts: ClassVar[List[Dict[str, Any]]] = []
 
-    frankfurter_api_url: ClassVar[str] = env.str(
-        name=EnvVar.FRANKFURTER_API_URL,
-        default=EnvVar.DEFAULT__FRANKFURTER_API_URL,
-    )
+    frankfurter_api_url: ClassVar[str] = EnvVar.FRANKFURTER_API_URL
 
     def register_features(self, mcp: FastMCP) -> FastMCP:
         """
@@ -84,10 +81,7 @@ class MCPMixin:
         self,
         response: Any,
         http_response: httpx.Response,
-        include_metadata: bool = env.bool(
-            name=EnvVar.MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE,
-            default=EnvVar.DEFAULT__MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE,
-        ),
+        include_metadata: bool = EnvVar.MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE,
     ) -> TextContent:
         """
         Convert response data to TextContent format.
@@ -140,10 +134,7 @@ class HTTPHelperMixin:
         """
         Obtain an HTTPX client for making requests.
         """
-        verify = env.bool(
-            name=EnvVar.HTTPX_VERIFY_SSL,
-            default=EnvVar.DEFAULT__HTTPX_VERIFY_SSL,
-        )
+        verify = EnvVar.HTTPX_VERIFY_SSL
         if verify is False:
             logging.warning(
                 "SSL verification is disabled. This is not recommended for production use."
@@ -156,9 +147,6 @@ class HTTPHelperMixin:
             verify=verify if (verify is not None and verify is False) else ctx,
             follow_redirects=True,
             trust_env=True,
-            timeout=env.float(
-                name=EnvVar.HTTPX_TIMEOUT,
-                default=EnvVar.DEFAULT__HTTPX_TIMEOUT,
-            ),
+            timeout=EnvVar.HTTPX_TIMEOUT,
         )
         return client

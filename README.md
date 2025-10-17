@@ -27,6 +27,8 @@ The following environment variables can be specified, prefixed with `FASTMCP_`: 
 
 The underlying HTTP client also respects some environment variables, as documented in [the HTTPX library](https://www.python-httpx.org/environment_variables/). In addition, `SSL_CERT_FILE` and `SSL_CERT_DIR` can be configured to use self-signed certificates of hosted API endpoint or intermediate HTTP(S) proxy server(s).
 
+Frankfurter MCP will cache calls to the Frankfurter API to improve performance. The cache happens with two different strategies. For API calls whose responses do not change for certain parameters, e.g., historical rate lookup, a least recently used (LRU) cache is used. For API calls whose responses do change, e.g., latest rate lookup, a time-to-live (TTL) cache is used with a default time-to-live set to 15 minutes. The cache parameters can be adjusted using the environment variables, see below.
+
 | Variable |  [Default value] and description   |
 |--------------|----------------|
 | `LOG_LEVEL` | [INFO] The level for logging. Changing this level also affects the log output of other dependent libraries that may use the same environment variable. See valid values at [Python logging documentation](https://docs.python.org/3/library/logging.html#logging-levels). |
@@ -37,6 +39,9 @@ The underlying HTTP client also respects some environment variables, as document
 | `MCP_SERVER_TRANSPORT` | [stdio] The acceptable options are `stdio`, `sse` or `streamable-http`. However, in the `.env.template`, the default value is set to `stdio`. |
 | `MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE` | [True] This specifies if additional metadata will be included with the MCP type `TextContent` that wraps the response data from each tool call. The additional metadata, for example, will include the API URL of the Frankfurter server, amongst others, that is used to obtain the responses. |
 | `FRANKFURTER_API_URL` | [https://api.frankfurter.dev/v1] If you are [self-hosting the Frankfurter API](https://hub.docker.com/r/lineofflight/frankfurter), you should change this to the API endpoint address of your deployment. |
+| `LRU_CACHE_MAX_SIZE` | [1024] The maximum size of the least recently used (LRU) cache for API calls. |
+| `TTL_CACHE_MAX_SIZE` | [256] The maximum size of the time-to-live (TTL) cache for API calls. |
+| `TTL_CACHE_TTL_SECONDS` | [900] The time limit, in seconds, of the time-to-live (TTL) cache for API calls. |
 
 # Usage
 
