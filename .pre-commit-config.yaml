@@ -22,28 +22,23 @@ repos:
       - id: detect-private-key
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
-    rev: v0.13.0
+    rev: v0.14.5
     hooks:
       # Run the linter.
       - id: ruff
+        name: lint
         args: [--fix, --exit-non-zero-on-fix, --respect-gitignore]
         exclude: ".*uv.lock|.*_static"
       # Run the formatter.
       - id: ruff-format
+        name: format
         args: [--respect-gitignore]
         exclude: ".*uv.lock|.*_static"
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.17.1
-    hooks:
-      - id: mypy
-        args: [--config-file=mypy.ini]
-  # Inspired by: https://medium.com/@fistralpro/pytest-pre-commit-hook-b492edd0560e
-  # Running pytest with uv will slow down the commit process.
   # - repo: local
   #   hooks:
-  #   - id: pytest
-  #     name: pytest using uv
-  #     entry: bash -c "MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE=true MCP_SERVER_TRANSPORT=streamable-http uv run --group test pytest tests/"
+  #   - id: ty
+  #     name: typecheck
+  #     entry: uv run ty check
   #     language: system
   #     types: [python]
   #     pass_filenames: false

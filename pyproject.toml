@@ -1,6 +1,6 @@
 [project]
 name = "frankfurtermcp"
-version = "0.4.0.post1"
+version = "0.4.1"
 description = "A MCP server for currency exchange rates and currency conversion using the Frankfurter API."
 readme = {file = "README.md", content-type = "text/markdown"}
 license = "MIT"
@@ -22,7 +22,7 @@ classifiers = [
 dependencies = [
     "cachetools>=6.2.1",
     "environs>=14.3.0",
-    "fastmcp>=2.8.0",
+    "fastmcp>=2.13.1",
     "pycountry>=24.6.1",
     "pydantic-extra-types>=2.10.5",
     "types-cachetools>=6.2.0.20250827",
@@ -43,10 +43,60 @@ build-backend = "hatchling.build"
 [dependency-groups]
 dev = [
     "icecream>=2.1.4",
-    "pre-commit>=4.2.0",
+    "ruff>=0.14.5",
+    "ty>=0.0.1a27",
 ]
 test = [
     "coverage>=7.10.6",
     "pytest>=8.4.0",
     "pytest-benchmark>=5.1.0",
 ]
+
+[tool.ty.rules]
+possibly-unresolved-reference = "warn"
+invalid-argument-type = "ignore"
+
+[tool.ty.environment]
+python-version = "3.12"
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+include = [
+    "src/twx/**/*.py",
+    "tests/**/*.py",
+    "docs/**/*.py",
+]
+
+[tool.ruff.lint]
+extend-select = [
+    "Q",
+    "RUF100",
+    "RUF018", # https://docs.astral.sh/ruff/rules/assignment-in-assert/
+    "C90",
+    "UP",
+    "I",
+    "D",
+    "TID251",
+]
+# flake8-quotes = { inline-quotes = "single", multiline-quotes = "double" }
+mccabe = { max-complexity = 15 }
+ignore = [
+    "D100", # ignore missing docstring in module
+    "D102", # ignore missing docstring in public method
+    "D104", # ignore missing docstring in public package
+    "D105", # ignore missing docstring in magic methods
+    "D107", # ignore missing docstring in __init__ methods
+]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+known-first-party = ["twx"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.format]
+# don't format python in docstrings, pytest-examples takes care of it
+docstring-code-format = false
+# quote-style = "single"

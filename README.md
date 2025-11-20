@@ -13,11 +13,9 @@ _If your objective is to use the tools available on this MCP server, please refe
 
 The directory where you clone this repository will be referred to as the _working directory_ or _WD_ hereinafter.
 
-Install [uv](https://docs.astral.sh/uv/getting-started/installation/). To install the project with its minimal dependencies in a virtual environment, run the following in the _WD_. To install all non-essential dependencies (_which are required for developing and testing_), replace the `--no-dev` with the `--all-groups` flag in the following command.
+Install [just](https://just.systems/man/en/) to manage project tasks.
 
-```bash
-uv sync --no-dev
-```
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/). To install the project with its minimal dependencies in a virtual environment, run the `just install` in the _WD_. To install all non-essential dependencies (_which are required for developing and testing_), run `just install-all` instead.
 
 ## Environment variables
 
@@ -172,10 +170,10 @@ The required and optional arguments for each tool are not listed in the followin
 
 # Contributing
 
-Install [`pre-commit`](https://pre-commit.com/) for Git and [`ruff`](https://docs.astral.sh/ruff/installation/). Then enable `pre-commit` by running the following in the _WD_.
+Install [`prek`](https://prek.j178.dev/). Then enable `prek` by running the following in the _WD_.
 
 ```bash
-pre-commit install
+prek install
 ```
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
@@ -187,7 +185,7 @@ To run the provided test cases, execute the following. Add the flag `--capture=t
 uv run --group test pytest tests/
 ```
 
-There is a handy testing script _WD_`/run-tests.sh`, which will run all the tests and generate a coverage report as follows. It can also accept arguments and parameters to be passed to `pytest`, such as `-k` for filtering the tests to run. If all tests are run, the generated coverage report may look like the one below.
+Invoke `just test-coverage` to run all the tests and generate a coverage report as follows. If all tests are run, the generated coverage report may look like the one below.
 
 ```bash
 Name                             Stmts   Miss  Cover
@@ -214,6 +212,7 @@ Following is a table of some updates regarding the project status. Note that the
 
 | Date     |  Status   |  Notes or observations   |
 |----------|:-------------:|----------------------|
+| November 21, 2025 |  active |  New tooling using `prek` (instead of `pre-commit`), `ty` (instead of `mypy`) and `just`. |
 | September 6, 2025 |  active |  Code refactoring and cleanup. |
 | June 27, 2025 |  active |  Successful remote deployments on Glama.AI and Smithery.AI. |
 | June 9, 2025 |  active |  Added containerisation, support for self-signed proxies. |
