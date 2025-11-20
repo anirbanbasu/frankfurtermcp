@@ -1,24 +1,16 @@
 import logging
+
 from environs import Env
-from rich.logging import RichHandler
-
 from marshmallow.validate import OneOf
-
-
-try:
-    from icecream import ic
-
-    ic.configureOutput(includeContext=True)
-except ImportError:  # pragma: no cover
-    # Graceful fallback if IceCream isn't installed.
-    ic = lambda *a: None if not a else (a[0] if len(a) == 1 else a)  # noqa
-
+from rich.logging import RichHandler
 
 env = Env()
 env.read_env()
 
 
 class EnvVar:
+    """Environment variables for configuring the Frankfurter MCP server."""
+
     LOG_LEVEL = env.str(
         "LOG_LEVEL",
         default="INFO",
@@ -31,12 +23,8 @@ class EnvVar:
         default="stdio",
         validate=OneOf(["stdio", "sse", "streamable-http", "http"]),
     )
-    MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE = env.bool(
-        "MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE", default=True
-    )
-    FRANKFURTER_API_URL = env.str(
-        "FRANKFURTER_API_URL", default="https://api.frankfurter.dev/v1"
-    )
+    MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE = env.bool("MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE", default=True)
+    FRANKFURTER_API_URL = env.str("FRANKFURTER_API_URL", default="https://api.frankfurter.dev/v1")
     HTTPX_TIMEOUT = env.float("HTTPX_TIMEOUT", default=5.0)
     HTTPX_VERIFY_SSL = env.bool("HTTPX_VERIFY_SSL", default=True)
 
@@ -49,9 +37,5 @@ logging.basicConfig(
     level=EnvVar.LOG_LEVEL,
     format="%(message)s",
     datefmt="[%X]",
-    handlers=[
-        RichHandler(
-            rich_tracebacks=False, markup=True, show_path=False, show_time=False
-        )
-    ],
+    handlers=[RichHandler(rich_tracebacks=False, markup=True, show_path=False, show_time=False)],
 )
