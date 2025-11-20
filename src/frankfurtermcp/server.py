@@ -1,31 +1,25 @@
-from datetime import date
 import logging
 import sys
 import threading
-from typing import Annotated, List, Optional, Tuple, Union
+from datetime import date
+from typing import Annotated
+
 import httpx
-
-from fastmcp import FastMCP, Context
-
-
+from cachetools import LRUCache, TTLCache, cached  # type: ignore
+from fastmcp import Context, FastMCP
 from pydantic import Field, PositiveFloat
 from pydantic_extra_types.currency_code import ISO4217
-from frankfurtermcp import EnvVar
 
+from frankfurtermcp import EnvVar
 from frankfurtermcp.common import AppMetadata
 from frankfurtermcp.mixin import HTTPHelperMixin, MCPMixin
 from frankfurtermcp.model import CurrencyConversionResponse
-
-from cachetools import cached, TTLCache, LRUCache  # type: ignore
 
 logger = logging.getLogger(__name__)
 
 
 class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
-    """
-    A FastMCP application that provides currency exchange rate functionalities
-    using the Frankfurter API.
-    """
+    """A FastMCP application that provides currency exchange rate functionalities using the Frankfurter API."""
 
     tools = [
         {
@@ -75,24 +69,16 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
     ]
 
     async def get_supported_currencies(self, ctx: Context):
-        """
-        Returns a list of three-letter currency codes for the supported currencies.
-        """
+        """Returns a list of three-letter currency codes for the supported currencies."""
         try:
             with self.get_httpx_client() as client:
-                await ctx.info(
-                    f"Fetching supported currencies from Frankfurter API at {self.frankfurter_api_url}"
-                )
+                await ctx.info(f"Fetching supported currencies from Frankfurter API at {self.frankfurter_api_url}")
                 http_response = client.get(f"{self.frankfurter_api_url}/currencies")
                 http_response.raise_for_status()
                 result = http_response.json()
-                return self.get_response_text_content(
-                    response=result, http_response=http_response
-                )
+                return self.get_response_text_content(response=result, http_response=http_response)
         except httpx.RequestError as e:
-            raise ValueError(
-                f"Failed to fetch supported currencies from {self.frankfurter_api_url}. {e}"
-            )
+            raise ValueError(f"Failed to fetch supported currencies from {self.frankfurter_api_url}. {e}")
 
     @cached(
         cache=TTLCache(EnvVar.TTL_CACHE_MAX_SIZE, EnvVar.TTL_CACHE_TTL_SECONDS),
@@ -100,13 +86,10 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
     )
     def _get_latest_exchange_rates(
         self,
-        base_currency: Union[str, None] = None,
-        symbols: Union[Tuple[str, ...], None] = None,
+        base_currency: str | None = None,
+        symbols: tuple[str, ...] | None = None,
     ):
-        """
-        Internal function to get the latest exchange rates.
-        This is a helper function for the main tool.
-        """
+        """Internal function to get the latest exchange rates. This is a helper function for the main tool."""
         try:
             params = {}
             if base_currency:
@@ -122,23 +105,18 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
                 result = http_response.json()
                 return result, http_response
         except httpx.RequestError as e:
-            raise ValueError(
-                f"Failed to fetch latest exchange rates from {self.frankfurter_api_url}. {e}"
-            )
+            raise ValueError(f"Failed to fetch latest exchange rates from {self.frankfurter_api_url}. {e}")
 
     @cached(cache=LRUCache(EnvVar.LRU_CACHE_MAX_SIZE), lock=threading.Lock())
     def _get_historical_exchange_rates(
         self,
-        specific_date: Union[str, None] = None,
-        start_date: Union[str, None] = None,
-        end_date: Union[str, None] = None,
-        base_currency: Union[str, None] = None,
-        symbols: Union[Tuple[str, ...], None] = None,
+        specific_date: str | None = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        base_currency: str | None = None,
+        symbols: tuple[str, ...] | None = None,
     ):
-        """
-        Internal function to get historical exchange rates.
-        This is a helper function for the main tool.
-        """
+        """Internal function to get historical exchange rates. This is a helper function for the main tool."""
         try:
             params = {}
             if base_currency:
@@ -156,9 +134,7 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
                 # If only specific_date is provided, we assume it is the date for which we want the rates
                 frankfurter_url += f"/{specific_date}"
             else:
-                raise ValueError(
-                    "You must provide either a specific date, a start date, or a date range."
-                )
+                raise ValueError("You must provide either a specific date, a start date, or a date range.")
 
             with self.get_httpx_client() as client:
                 http_response = client.get(
@@ -169,44 +145,36 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
                 result = http_response.json()
                 return result, http_response
         except httpx.RequestError as e:
-            raise ValueError(
-                f"Failed to fetch historical exchange rates from {self.frankfurter_api_url}. {e}"
-            )
+            raise ValueError(f"Failed to fetch historical exchange rates from {self.frankfurter_api_url}. {e}")
 
     async def get_latest_exchange_rates(
         self,
         ctx: Context,
         base_currency: Annotated[
             ISO4217,
-            Field(
-                description="A base currency ISO4217 code for which rates are to be requested."
-            ),
+            Field(description="A base currency ISO4217 code for which rates are to be requested."),
         ],
         symbols: Annotated[
-            Optional[List[ISO4217] | ISO4217],
+            list[ISO4217] | ISO4217 | None,
             Field(
                 description="A list of target currency ISO4217 codes for which rates against the base currency will be provided. If not provided, all supported currencies will be shown."
             ),
         ] = None,
     ):
-        """
-        Returns the latest exchange rates for specific currencies. The
-        symbols can be used to filter the results to specific currencies.
+        """Returns the latest exchange rates for specific currencies.
+
+        The symbols can be used to filter the results to specific currencies.
         If symbols is not provided, all supported currencies will be returned.
         """
         # Some LLMs make this mistake of passing just one currency but not as a list!
         if type(symbols) is str:
             symbols = [symbols]
-        await ctx.info(
-            f"Fetching latest exchange rates from Frankfurter API at {self.frankfurter_api_url}"
-        )
+        await ctx.info(f"Fetching latest exchange rates from Frankfurter API at {self.frankfurter_api_url}")
         result, http_response = self._get_latest_exchange_rates(
             base_currency=base_currency,
             symbols=tuple(symbols) if symbols else None,
         )
-        return self.get_response_text_content(
-            response=result, http_response=http_response
-        )
+        return self.get_response_text_content(response=result, http_response=http_response)
 
     async def convert_currency_latest(
         self,
@@ -215,16 +183,10 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
             PositiveFloat,
             Field(description="The amount in the source currency to convert."),
         ],
-        from_currency: Annotated[
-            ISO4217, Field(description="The source currency ISO4217 code.")
-        ],
-        to_currency: Annotated[
-            ISO4217, Field(description="The target currency ISO4217 code.")
-        ],
+        from_currency: Annotated[ISO4217, Field(description="The source currency ISO4217 code.")],
+        to_currency: Annotated[ISO4217, Field(description="The target currency ISO4217 code.")],
     ):
-        """
-        Converts an amount from one currency to another using the latest exchange rates.
-        """
+        """Converts an amount from one currency to another using the latest exchange rates."""
         if from_currency.lower() == to_currency.lower():
             # If the source and target currencies are the same, no conversion is needed
             raise ValueError(
@@ -239,14 +201,10 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
         )
         await ctx.info(f"Converting {amount} of {from_currency} to {to_currency}")
         if not latest_rates or "rates" not in latest_rates:
-            raise ValueError(
-                f"Could not retrieve exchange rates for {from_currency} to {to_currency}."
-            )
+            raise ValueError(f"Could not retrieve exchange rates for {from_currency} to {to_currency}.")
         rate = latest_rates["rates"].get(to_currency)
         if rate is None:
-            raise ValueError(
-                f"Exchange rate for {from_currency} to {to_currency} not found."
-            )
+            raise ValueError(f"Exchange rate for {from_currency} to {to_currency} not found.")
         converted_amount = amount * float(rate)
         result = CurrencyConversionResponse(
             from_currency=from_currency,
@@ -256,58 +214,52 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
             exchange_rate=rate,
             rate_date=latest_rates["date"],
         )
-        return self.get_response_text_content(
-            response=result, http_response=http_response
-        )
+        return self.get_response_text_content(response=result, http_response=http_response)
 
     async def get_historical_exchange_rates(
         self,
         ctx: Context,
         base_currency: Annotated[
             ISO4217,
-            Field(
-                description="A base currency ISO4217 code for which rates are to be requested."
-            ),
+            Field(description="A base currency ISO4217 code for which rates are to be requested."),
         ],
         symbols: Annotated[
-            Optional[List[ISO4217] | ISO4217],
+            list[ISO4217] | ISO4217 | None,
             Field(
                 description="A list of target currency ISO4217 codes for which rates against the base currency will be provided. If not provided, all supported currencies will be shown."
             ),
         ] = None,
         specific_date: Annotated[
-            Optional[date],
+            date | None,
             Field(
                 default=None,
                 description="The specific date for which the historical rates are requested in the YYYY-MM-DD format.",
             ),
         ] = None,
         start_date: Annotated[
-            Optional[date],
+            date | None,
             Field(
                 default=None,
                 description="The start date, of a date range, for which the historical rates are requested in the YYYY-MM-DD format.",
             ),
         ] = None,
         end_date: Annotated[
-            Optional[date],
+            date | None,
             Field(
                 default=None,
                 description="The end date, of a date range, for which the historical rates are requested in the YYYY-MM-DD format.",
             ),
         ] = None,
     ):
-        """
-        Returns historical exchange rates for a specific date or date range.
+        """Returns historical exchange rates for a specific date or date range.
+
         If the exchange rates for a specified date is not available, the rates available for
         the closest date before the specified date will be provided.
         Either a specific date, a start date, or a date range must be provided.
         The symbols can be used to filter the results to specific currencies.
         If symbols are not provided, all supported currencies will be returned.
         """
-        await ctx.info(
-            f"Fetching historical exchange rates from Frankfurter API at {self.frankfurter_api_url}"
-        )
+        await ctx.info(f"Fetching historical exchange rates from Frankfurter API at {self.frankfurter_api_url}")
         # Some LLMs make this mistake of passing just one currency but not as a list!
         if type(symbols) is str:
             symbols = [symbols]
@@ -318,12 +270,8 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
             base_currency=base_currency,
             symbols=tuple(symbols) if symbols else None,
         )
-        await ctx.info(
-            f"Historical exchange rates fetched for {len(result.get('rates', []))} dates."
-        )
-        return self.get_response_text_content(
-            response=result, http_response=http_response
-        )
+        await ctx.info(f"Historical exchange rates fetched for {len(result.get('rates', []))} dates.")
+        return self.get_response_text_content(response=result, http_response=http_response)
 
     async def convert_currency_specific_date(
         self,
@@ -332,21 +280,15 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
             PositiveFloat,
             Field(description="The amount in the source currency to convert."),
         ],
-        from_currency: Annotated[
-            ISO4217, Field(description="The source currency ISO4217 code.")
-        ],
-        to_currency: Annotated[
-            ISO4217, Field(description="The target currency ISO4217 code.")
-        ],
+        from_currency: Annotated[ISO4217, Field(description="The source currency ISO4217 code.")],
+        to_currency: Annotated[ISO4217, Field(description="The target currency ISO4217 code.")],
         specific_date: Annotated[
             date,
-            Field(
-                description="The specific date for which the conversion is requested in the YYYY-MM-DD format."
-            ),
+            Field(description="The specific date for which the conversion is requested in the YYYY-MM-DD format."),
         ],
     ):
-        """
-        Convert an amount from one currency to another using the exchange rates for a specific date.
+        """Convert an amount from one currency to another using the exchange rates for a specific date.
+
         If there is no exchange rate available for the specific date, the rate for the closest available date before
         the specified date will be used.
         """
@@ -363,18 +305,14 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
             base_currency=from_currency,
             symbols=tuple([to_currency]),
         )
-        await ctx.info(
-            f"Converting {amount} of {from_currency} to {to_currency} on {specific_date}"
-        )
+        await ctx.info(f"Converting {amount} of {from_currency} to {to_currency} on {specific_date}")
         if not date_specific_rates or "rates" not in date_specific_rates:
             raise ValueError(
                 f"Could not retrieve exchange rates for {from_currency} to {to_currency} for {specific_date}."
             )
         rate = date_specific_rates["rates"].get(to_currency)
         if rate is None:
-            raise ValueError(
-                f"Exchange rate for {from_currency} to {to_currency} not found."
-            )
+            raise ValueError(f"Exchange rate for {from_currency} to {to_currency} not found.")
         converted_amount = amount * float(rate)
         result = CurrencyConversionResponse(
             from_currency=from_currency,
@@ -384,12 +322,11 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
             exchange_rate=rate,
             rate_date=date_specific_rates["date"],
         )
-        return self.get_response_text_content(
-            response=result, http_response=http_response
-        )
+        return self.get_response_text_content(response=result, http_response=http_response)
 
 
 def app() -> FastMCP:
+    """Create and configure the FastMCP application for the Frankfurter MCP server."""
     app = FastMCP(
         name=AppMetadata.package_metadata["Name"],
         instructions=AppMetadata.package_metadata["Description"],
@@ -403,6 +340,7 @@ def app() -> FastMCP:
 
 
 def main():  # pragma: no cover
+    """Main entry point for running the Frankfurter MCP server."""
     try:
         mcp_app = app()
         transport_type = EnvVar.MCP_SERVER_TRANSPORT
