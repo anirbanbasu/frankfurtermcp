@@ -5,12 +5,13 @@ from datetime import date
 from typing import Annotated
 
 import httpx
-from cachetools import LRUCache, TTLCache, cached  # type: ignore
+from cachetools import cached  # type: ignore
+from cachetools.keys import hashkey
 from fastmcp import Context, FastMCP
 from pydantic import Field, PositiveFloat
 from pydantic_extra_types.currency_code import ISO4217
 
-from frankfurtermcp import EnvVar
+from frankfurtermcp import EnvVar, lru_cache, ttl_cache
 from frankfurtermcp.common import AppMetadata
 from frankfurtermcp.mixin import HTTPHelperMixin, MCPMixin
 from frankfurtermcp.model import CurrencyConversionResponse
@@ -76,12 +77,12 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
                 http_response = client.get(f"{self.frankfurter_api_url}/currencies")
                 http_response.raise_for_status()
                 result = http_response.json()
-                return self.get_response_text_content(response=result, http_response=http_response)
+                return self.get_response_content(response=result, http_response=http_response)
         except httpx.RequestError as e:
             raise ValueError(f"Failed to fetch supported currencies from {self.frankfurter_api_url}. {e}")
 
     @cached(
-        cache=TTLCache(EnvVar.TTL_CACHE_MAX_SIZE, EnvVar.TTL_CACHE_TTL_SECONDS),
+        cache=ttl_cache,
         lock=threading.Lock(),
     )
     def _get_latest_exchange_rates(
@@ -107,7 +108,7 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
         except httpx.RequestError as e:
             raise ValueError(f"Failed to fetch latest exchange rates from {self.frankfurter_api_url}. {e}")
 
-    @cached(cache=LRUCache(EnvVar.LRU_CACHE_MAX_SIZE), lock=threading.Lock())
+    @cached(cache=lru_cache, lock=threading.Lock(), key=hashkey)
     def _get_historical_exchange_rates(
         self,
         specific_date: str | None = None,
@@ -174,7 +175,7 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
             base_currency=base_currency,
             symbols=tuple(symbols) if symbols else None,
         )
-        return self.get_response_text_content(response=result, http_response=http_response)
+        return self.get_response_content(response=result, http_response=http_response)
 
     async def convert_currency_latest(
         self,
@@ -214,7 +215,7 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
             exchange_rate=rate,
             rate_date=latest_rates["date"],
         )
-        return self.get_response_text_content(response=result, http_response=http_response)
+        return self.get_response_content(response=result, http_response=http_response)
 
     async def get_historical_exchange_rates(
         self,
@@ -263,6 +264,15 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
         # Some LLMs make this mistake of passing just one currency but not as a list!
         if type(symbols) is str:
             symbols = [symbols]
+        cache_key = hashkey(
+            self,
+            specific_date=specific_date.isoformat() if specific_date else None,
+            start_date=start_date.isoformat() if start_date else None,
+            end_date=end_date.isoformat() if end_date else None,
+            base_currency=base_currency,
+            symbols=tuple(symbols) if symbols else None,
+        )
+        cache_hit = cache_key in lru_cache
         result, http_response = self._get_historical_exchange_rates(
             specific_date=specific_date.isoformat() if specific_date else None,
             start_date=start_date.isoformat() if start_date else None,
@@ -270,8 +280,9 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
             base_currency=base_currency,
             symbols=tuple(symbols) if symbols else None,
         )
+        print(f"Cache hit: {cache_hit} for key: {cache_key}")
         await ctx.info(f"Historical exchange rates fetched for {len(result.get('rates', []))} dates.")
-        return self.get_response_text_content(response=result, http_response=http_response)
+        return self.get_response_content(response=result, http_response=http_response)
 
     async def convert_currency_specific_date(
         self,
@@ -300,11 +311,19 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
         await ctx.info(
             f"Obtaining historical exchange rates for {from_currency} to {to_currency} on {specific_date} from Frankfurter API at {self.frankfurter_api_url}"
         )
+        cache_key = hashkey(
+            self,
+            specific_date=specific_date.isoformat(),
+            base_currency=from_currency,
+            symbols=tuple([to_currency]),
+        )
+        cache_hit = cache_key in lru_cache
         date_specific_rates, http_response = self._get_historical_exchange_rates(
             specific_date=specific_date.isoformat(),
             base_currency=from_currency,
             symbols=tuple([to_currency]),
         )
+        print(f"Cache hit: {cache_hit} for key: {cache_key}")
         await ctx.info(f"Converting {amount} of {from_currency} to {to_currency} on {specific_date}")
         if not date_specific_rates or "rates" not in date_specific_rates:
             raise ValueError(
@@ -322,7 +341,7 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
             exchange_rate=rate,
             rate_date=date_specific_rates["date"],
         )
-        return self.get_response_text_content(response=result, http_response=http_response)
+        return self.get_response_content(response=result, http_response=http_response)
 
 
 def app() -> FastMCP:

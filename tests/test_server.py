@@ -50,6 +50,9 @@ class TestMCPServer:
                 mcp_client=mcp_client,
             )
         )
+        assert isinstance(response.meta, dict), (
+            f"Expected result from MCP tool call, {test_method}, to contain a metadata dictionary"
+        )
         json_result: dict = json.loads(response.content[0].text)
         assert len(json_result.keys()) > 0, "Expected non-empty list of currencies"
         assert all((isinstance(code, str) and len(code) == 3) for code in json_result.keys()), (
@@ -67,6 +70,9 @@ class TestMCPServer:
                 to_currency="JPY",
                 amount=100.0,
             )
+        )
+        assert isinstance(response.meta, dict), (
+            f"Expected result from MCP tool call, {test_method}, to contain a metadata dictionary"
         )
         json_result: dict = json.loads(response.content[0].text)
         logger.info(f"{test_method} response: {json_result}")
@@ -88,6 +94,9 @@ class TestMCPServer:
             )
 
         response = benchmark.pedantic(bench_func, iterations=1, rounds=5, warmup_rounds=1)
+        assert isinstance(response.meta, dict), (
+            f"Expected result from MCP tool call, {test_method}, to contain a metadata dictionary"
+        )
         json_result: dict = json.loads(response.content[0].text)
         assert len(json_result["rates"].keys()) > 0, "Expected non-empty list of currency rates"
         assert all((isinstance(code, str) and len(code) == 3) for code in json_result["rates"].keys()), (
@@ -111,6 +120,9 @@ class TestMCPServer:
             )
 
         response = benchmark.pedantic(bench_func, iterations=1, rounds=5, warmup_rounds=1)
+        assert isinstance(response.meta, dict), (
+            f"Expected result from MCP tool call, {test_method}, to contain a metadata dictionary"
+        )
         json_result: dict = json.loads(response.content[0].text)
         assert all(len(rates_for_date) > 0 for _, rates_for_date in json_result["rates"].items()), (
             "Expected non-empty list of currency rates"
@@ -131,6 +143,9 @@ class TestMCPServer:
                 symbols="GBP",
             )
         )
+        assert isinstance(response.meta, dict), (
+            f"Expected result from MCP tool call, {test_method}, to contain a metadata dictionary"
+        )
         json_result: dict = json.loads(response.content[0].text)
         assert len(json_result["rates"].keys()) > 0, "Expected non-empty list of currency rates"
         assert all((isinstance(code, str) and len(code) == 3) for code in json_result["rates"].keys()), (
@@ -149,6 +164,9 @@ class TestMCPServer:
                 end_date="2025-06-19",
                 symbols=["EUR", "GBP", "CHF", "NZD"],
             )
+        )
+        assert isinstance(response.meta, dict), (
+            f"Expected result from MCP tool call, {test_method}, to contain a metadata dictionary"
         )
         json_result: dict = json.loads(response.content[0].text)
         assert all(len(rates_for_date) > 0 for _, rates_for_date in json_result["rates"].items()), (
@@ -171,6 +189,9 @@ class TestMCPServer:
                 amount=100.0,
                 specific_date="2025-06-01",
             )
+        )
+        assert isinstance(response.meta, dict), (
+            f"Expected result from MCP tool call, {test_method}, to contain a metadata dictionary"
         )
         json_result: dict = json.loads(response.content[0].text)
         print(f"{test_method} response: {json_result}")

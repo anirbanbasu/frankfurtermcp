@@ -54,6 +54,7 @@ test = [
 
 [tool.ty.rules]
 possibly-unresolved-reference = "warn"
+# Keyword argument expansion is not supported by ty yet? https://github.com/astral-sh/ty/issues/247
 invalid-argument-type = "ignore"
 
 [tool.ty.environment]

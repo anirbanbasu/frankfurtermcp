@@ -8,8 +8,9 @@ from typing import Any, ClassVar
 import certifi
 import httpx
 from fastmcp import FastMCP
+from fastmcp.tools.tool import ToolResult
 from mcp.types import TextContent
-from pydantic import BaseModel
+from pydantic import BaseModel, HttpUrl
 
 from frankfurtermcp import EnvVar
 from frankfurtermcp.common import AppMetadata
@@ -70,47 +71,50 @@ class MCPMixin:
 
         return mcp
 
-    def get_response_text_content(
+    def get_response_content(
         self,
         response: Any,
         http_response: httpx.Response,
         include_metadata: bool = EnvVar.MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE,
-    ) -> TextContent:
-        """Convert response data to TextContent format.
+    ) -> ToolResult:
+        """Convert response data to a ToolResult format with optional metadata.
 
         Args:
             response (Any): The response data to convert.
             http_response (httpx.Response): The HTTP response object for header extraction.
-            include_metadata (bool): Whether to include metadata in the TextContent.
+            include_metadata (bool): Whether to include metadata in the response.
 
         Returns:
-            TextContent: The converted TextContent object.
+            ToolResult: The ToolResult enclosing the TextContent representation of the response
+            along with metadata if requested.
         """
         literal_text = "text"
-        if isinstance(response, TextContent):
-            # do nothing yet
-            pass
-        elif isinstance(response, (str, int, float, complex, bool, type(None))):
+        text_content: TextContent | None = None
+        if isinstance(response, TextContent):  # pragma: no cover
+            text_content = response
+        elif isinstance(response, (str, int, float, complex, bool, type(None))):  # pragma: no cover
             text_content = TextContent(type=literal_text, text=str(response))
         elif isinstance(response, dict) or isinstance(response, list):
             text_content = TextContent(type=literal_text, text=json.dumps(response))
         elif isinstance(response, BaseModel):
             text_content = TextContent(type=literal_text, text=response.model_dump_json())
-        else:
+        else:  # pragma: no cover
             raise TypeError(
                 f"Unsupported data type: {type(response).__name__}. "
                 "Only str, int, float, complex, bool, dict, list, and Pydantic BaseModel types are supported for wrapping as TextContent."
             )
+        tool_result = ToolResult(content=[text_content])
         if include_metadata:
-            text_content.meta = text_content.meta if hasattr(text_content, "_meta") else {}
-            text_content.meta[AppMetadata.PACKAGE_NAME] = ResponseMetadata(
-                version=AppMetadata.package_metadata["Version"],
-                api_url=self.frankfurter_api_url,
-                api_status_code=http_response.status_code,
-                api_bytes_downloaded=http_response.num_bytes_downloaded,
-                api_elapsed_time=http_response.elapsed.microseconds,
-            ).model_dump()
-        return text_content
+            tool_result.meta = {
+                AppMetadata.PACKAGE_NAME: ResponseMetadata(
+                    version=AppMetadata.package_metadata["Version"],
+                    api_url=HttpUrl(self.frankfurter_api_url),
+                    api_status_code=http_response.status_code,
+                    api_bytes_downloaded=http_response.num_bytes_downloaded,
+                    api_elapsed_time=http_response.elapsed.microseconds,
+                ).model_dump(),
+            }
+        return tool_result
 
 
 class HTTPHelperMixin:
