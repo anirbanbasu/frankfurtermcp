@@ -24,7 +24,7 @@ class TestMCPServer:
         server_with_features = mcp_obj.register_features(server)
         return server_with_features
 
-    @pytest.fixture(scope="class", autouse=True)
+    @pytest.fixture(scope="class")
     @classmethod
     def mcp_server_bogus_config(cls):
         """Fixture to register features in an MCP server with a bogus configuration."""
@@ -44,7 +44,7 @@ class TestMCPServer:
         )
         return mcp_client
 
-    @pytest.fixture(scope="class", autouse=True)
+    @pytest.fixture(scope="class")
     @classmethod
     def mcp_client_bogus_config(cls, mcp_server_bogus_config):
         """Fixture to create a client for the MCP server with a bogus config."""
