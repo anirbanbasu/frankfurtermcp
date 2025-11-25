@@ -32,7 +32,7 @@ class MCPMixin:
     # rest is arbitrary metadata relevant to FastMCP.
     prompts: ClassVar[list[dict[str, Any]]] = []
 
-    frankfurter_api_url: ClassVar[str] = EnvVar.FRANKFURTER_API_URL
+    frankfurter_api_url: str = EnvVar.FRANKFURTER_API_URL
 
     def register_features(self, mcp: FastMCP) -> FastMCP:
         """Register tools, resources, and prompts with the given FastMCP instance.
@@ -76,6 +76,7 @@ class MCPMixin:
         response: Any,
         http_response: httpx.Response,
         include_metadata: bool = EnvVar.MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE,
+        cached_response: bool = False,
     ) -> ToolResult:
         """Convert response data to a ToolResult format with optional metadata.
 
@@ -83,6 +84,7 @@ class MCPMixin:
             response (Any): The response data to convert.
             http_response (httpx.Response): The HTTP response object for header extraction.
             include_metadata (bool): Whether to include metadata in the response.
+            cached_response (bool): Indicates if the response was served from cache, which will be reflected in metadata.
 
         Returns:
             ToolResult: The ToolResult enclosing the TextContent representation of the response
@@ -112,6 +114,7 @@ class MCPMixin:
                     api_status_code=http_response.status_code,
                     api_bytes_downloaded=http_response.num_bytes_downloaded,
                     api_elapsed_time=http_response.elapsed.microseconds,
+                    cached_response=cached_response,
                 ).model_dump(),
             }
         return tool_result
@@ -123,7 +126,7 @@ class HTTPHelperMixin:
     def get_httpx_client(self) -> httpx.Client:
         """Obtain an HTTPX client for making requests."""
         verify = EnvVar.HTTPX_VERIFY_SSL
-        if verify is False:
+        if verify is False:  # pragma: no cover
             logging.warning("SSL verification is disabled. This is not recommended for production use.")
         ctx = ssl.create_default_context(
             cafile=os.environ.get("SSL_CERT_FILE", certifi.where()),

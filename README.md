@@ -188,18 +188,16 @@ uv run --group test pytest tests/
 Invoke `just test-coverage` to run all the tests and generate a coverage report as follows. If all tests are run, the generated coverage report may look like the one below.
 
 ```bash
-Name                             Stmts   Miss  Cover
-----------------------------------------------------
-src/frankfurtermcp/__init__.py      10      0   100%
-src/frankfurtermcp/common.py        23      0   100%
-src/frankfurtermcp/mixin.py         52      4    92%
-src/frankfurtermcp/model.py         17      0   100%
-src/frankfurtermcp/server.py       111     20    82%
-tests/__init__.py                    0      0   100%
-tests/test_data_models.py           60      0   100%
-tests/test_server.py                71      0   100%
-----------------------------------------------------
-TOTAL                              344     24    93%
+Name                             Stmts   Miss  Cover   Missing
+--------------------------------------------------------------
+src/frankfurtermcp/__init__.py      22      0   100%
+src/frankfurtermcp/common.py         5      0   100%
+src/frankfurtermcp/mixin.py         47      0   100%
+src/frankfurtermcp/model.py         18      0   100%
+src/frankfurtermcp/server.py       117      0   100%
+--------------------------------------------------------------
+TOTAL                              209      0   100%
+Test coverage complete.
 ```
 
 # License
