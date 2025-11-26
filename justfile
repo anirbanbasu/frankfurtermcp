@@ -10,9 +10,6 @@ install-all:
     @uv sync --all-groups
     @echo "All project dependencies installed."
 
-# Project maintenance group of tasks
-maintenance: pre-commit-update upgrade-dependencies bump-patch
-
 # Update pre-commit hooks using 'prek'
 pre-commit-update:
     @echo "Updating pre-commit hooks using prek..."

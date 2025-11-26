@@ -1,4 +1,4 @@
-[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue?logo=python&logoColor=3776ab&labelColor=e4e4e4)](https://www.python.org/downloads/release/python-3120/) [![pytest](https://github.com/anirbanbasu/frankfurtermcp/actions/workflows/uv-pytest.yml/badge.svg)](https://github.com/anirbanbasu/frankfurtermcp/actions/workflows/uv-pytest.yml) ![GitHub commits since latest release](https://img.shields.io/github/commits-since/anirbanbasu/frankfurtermcp/latest)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue?logo=python&logoColor=3776ab&labelColor=e4e4e4)](https://www.python.org/downloads/release/python-3120/) [![pytest](https://github.com/anirbanbasu/frankfurtermcp/actions/workflows/uv-pytest-coverage.yml/badge.svg)](https://github.com/anirbanbasu/frankfurtermcp/actions/workflows/uv-pytest-coverage.yml) ![GitHub commits since latest release](https://img.shields.io/github/commits-since/anirbanbasu/frankfurtermcp/latest)
  [![PyPI](https://img.shields.io/pypi/v/frankfurtermcp?label=pypi%20package)](https://pypi.org/project/frankfurtermcp/#history)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/frankfurtermcp?label=pypi%20downloads)](https://pypi.org/project/frankfurtermcp/)
 [![Verified on MseeP](https://mseep.ai/badge.svg)](https://mseep.ai/app/c6527bdb-9b60-430d-9ed6-cb3c8b9a2b54) [![smithery badge](https://smithery.ai/badge/@anirbanbasu/frankfurtermcp)](https://smithery.ai/server/@anirbanbasu/frankfurtermcp)
@@ -86,8 +86,7 @@ If you change the port to anything other than 8000 in `.env.template`, _do remem
 
 ```bash
 docker build -t frankfurtermcp -f local.dockerfile .
-docker create -p 8000:8000/tcp --env-file .env.template --expose 8000 --name frankfurtermcp-container frankfurtermcp
-docker start frankfurtermcp-container
+docker run -it --rm -p 8000:8000/tcp --env-file .env.template --expose 8000 frankfurtermcp
 ```
 
 Upon successful build and container start, the MCP server will be available over HTTP at [http://localhost:8000/sse](http://localhost:8000/sse) for the Server Sent Events (SSE) transport, or [http://localhost:8000/mcp](http://localhost:8000/mcp) for the streamable HTTP transport.
