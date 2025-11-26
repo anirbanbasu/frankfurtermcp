@@ -28,4 +28,6 @@ jobs:
         run: uv sync --all-groups
 
       - name: Run pytest tests using coverage
-        run: MCP_SERVER_TRANSPORT=streamable-http uv run --group test coverage run -m pytest --capture=tee-sys -vvv --log-cli-level=INFO tests/
+        run: MCP_SERVER_TRANSPORT=streamable-http uv run --group test coverage run -m pytest tests/
+      - name: Generate coverage report
+        run: uv run coverage report -m
