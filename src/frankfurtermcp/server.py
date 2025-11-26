@@ -5,11 +5,14 @@ from datetime import date
 from typing import Annotated
 
 import httpx
+import uvicorn
 from cachetools import cached  # type: ignore
 from cachetools.keys import hashkey
 from fastmcp import Context, FastMCP
 from pydantic import Field, PositiveFloat
 from pydantic_extra_types.currency_code import ISO4217
+from starlette.middleware import Middleware
+from starlette.middleware.cors import CORSMiddleware
 
 from frankfurtermcp import EnvVar, lru_cache, ttl_cache
 from frankfurtermcp.common import AppMetadata
@@ -76,7 +79,10 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
                 await ctx.info(f"Fetching supported currencies from Frankfurter API at {self.frankfurter_api_url}")
                 http_response = client.get(f"{self.frankfurter_api_url}/currencies")
                 http_response.raise_for_status()
-                result = http_response.json()
+                # Note: The following line could easily be result = http_response.json() but we use content.decode() to
+                # demonstrate the TextContent wrapping capability of the get_response_content utility method.
+                # Questionable choice? Should we just use # pragma: no cover in the respective branch of get_response_content?
+                result = http_response.content.decode()
                 return self.get_response_content(response=result, http_response=http_response)
         except httpx.RequestError as e:
             raise ValueError(f"Failed to fetch supported currencies from {self.frankfurter_api_url}. {e}")
@@ -387,18 +393,32 @@ def main():  # pragma: no cover
     try:
         mcp_app = app()
         transport_type = EnvVar.MCP_SERVER_TRANSPORT
-        (
-            mcp_app.run(
-                transport=transport_type,
+        if transport_type != "stdio":
+            # Configure CORS for browser-based clients, see: https://gofastmcp.com/deployment/http#cors-for-browser-based-clients
+            middleware = [
+                Middleware(
+                    CORSMiddleware,
+                    allow_origins=["*"],  # Allow all origins; use specific origins for security
+                    allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
+                    allow_headers=[
+                        "mcp-protocol-version",
+                        "mcp-session-id",
+                        "Authorization",
+                        "Content-Type",
+                    ],
+                    expose_headers=["mcp-session-id"],
+                )
+            ]
+
+            asgi_app = mcp_app.http_app(middleware=middleware, transport=transport_type)
+            uvicorn.run(
+                asgi_app,
                 host=EnvVar.FASTMCP_HOST,
                 port=EnvVar.FASTMCP_PORT,
-                uvicorn_config={
-                    "timeout_graceful_shutdown": 5,  # seconds
-                },
+                timeout_graceful_shutdown=5,  # seconds
             )
-            if transport_type != "stdio"
-            else mcp_app.run(transport=transport_type)
-        )
+        else:
+            mcp_app.run(transport=transport_type)
     except KeyboardInterrupt:
         sys.exit(0)
     except Exception as e:

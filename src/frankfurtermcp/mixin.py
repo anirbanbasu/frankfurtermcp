@@ -92,20 +92,31 @@ class MCPMixin:
         """
         literal_text = "text"
         text_content: TextContent | None = None
+        structured_content: dict[str, Any] | None = None
         if isinstance(response, TextContent):  # pragma: no cover
             text_content = response
         elif isinstance(response, (str, int, float, complex, bool, type(None))):  # pragma: no cover
             text_content = TextContent(type=literal_text, text=str(response))
-        elif isinstance(response, dict) or isinstance(response, list):
+        elif isinstance(response, list):  # pragma: no cover
             text_content = TextContent(type=literal_text, text=json.dumps(response))
+        elif isinstance(response, dict):
+            structured_content = response
         elif isinstance(response, BaseModel):
-            text_content = TextContent(type=literal_text, text=response.model_dump_json())
+            structured_content = response.model_dump()
         else:  # pragma: no cover
             raise TypeError(
                 f"Unsupported data type: {type(response).__name__}. "
-                "Only str, int, float, complex, bool, dict, list, and Pydantic BaseModel types are supported for wrapping as TextContent."
+                "Only str, int, float, complex, bool, dict, list, and Pydantic BaseModel types are supported."
             )
-        tool_result = ToolResult(content=[text_content])
+        if text_content is not None:
+            tool_result = ToolResult(content=[text_content])
+        elif structured_content is not None:
+            tool_result = ToolResult(content=structured_content)
+        else:
+            assert False, (
+                "Unreachable code reached in get_response_content. "
+                "Both text_content and structured_content should not have been None."
+            )
         if include_metadata:
             tool_result.meta = {
                 AppMetadata.PACKAGE_NAME: ResponseMetadata(
