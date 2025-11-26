@@ -11,10 +11,10 @@ on:
 permissions:
   contents: read
 
-name: pytest
+name: pytest-with-coverage
 
 jobs:
-  uv-pytest:
+  uv-pytest-coverage:
     name: python
     runs-on: ubuntu-latest
 
@@ -27,5 +27,7 @@ jobs:
       - name: Install the project
         run: uv sync --all-groups
 
-      - name: Run tests using pytest
-        run: MCP_SERVER_TRANSPORT=streamable-http uv run --group test pytest tests/
+      - name: Run pytest tests using coverage
+        run: MCP_SERVER_TRANSPORT=streamable-http uv run --group test coverage run -m pytest tests/
+      - name: Generate coverage report
+        run: uv run coverage report -m

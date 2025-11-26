@@ -34,12 +34,12 @@ repos:
         name: format
         args: [--respect-gitignore]
         exclude: ".*uv.lock|.*_static"
-  # - repo: local
-  #   hooks:
-  #   - id: ty
-  #     name: typecheck
-  #     entry: uv run ty check
-  #     language: system
-  #     types: [python]
-  #     pass_filenames: false
-  #     always_run: true
+  - repo: local
+    hooks:
+    - id: ty
+      name: typecheck
+      entry: uv run ty check
+      language: system
+      types: [python]
+      pass_filenames: false
+      always_run: true

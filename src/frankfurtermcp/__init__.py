@@ -1,5 +1,6 @@
 import logging
 
+from cachetools import LRUCache, TTLCache
 from environs import Env
 from marshmallow.validate import OneOf
 from rich.logging import RichHandler
@@ -39,3 +40,6 @@ logging.basicConfig(
     datefmt="[%X]",
     handlers=[RichHandler(rich_tracebacks=False, markup=True, show_path=False, show_time=False)],
 )
+
+ttl_cache = TTLCache(EnvVar.TTL_CACHE_MAX_SIZE, EnvVar.TTL_CACHE_TTL_SECONDS)
+lru_cache = LRUCache(EnvVar.LRU_CACHE_MAX_SIZE)

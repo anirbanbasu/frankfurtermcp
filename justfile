@@ -31,16 +31,17 @@ bump-patch:
     @uv version --bump patch
     @echo "Updated project to: $(uv version --short)"
 
-# Run tests with coverage reporting
-test-coverage:
-    @echo "Running tests with coverage..."
-    @uv run --group test coverage run -m pytest --capture=tee-sys -vvv --log-cli-level=INFO tests/
-    @uv run coverage report -m
-    @echo "Test coverage complete."
-
 # Format the code
 format:
     @echo "Formatting code..."
     @uv run ruff format
     @uv run ruff check --fix --fix-only
     @echo "Code formatted."
+
+export MCP_SERVER_TRANSPORT := "streamable-http"
+# Run tests with coverage reporting
+test-coverage:
+    @echo "Running tests with coverage..."
+    @uv run --group test coverage run -m pytest --capture=tee-sys -vvv --log-cli-level=INFO tests/
+    @uv run coverage report -m
+    @echo "Test coverage complete."

@@ -54,6 +54,7 @@ test = [
 
 [tool.ty.rules]
 possibly-unresolved-reference = "warn"
+# Keyword argument expansion is not supported by ty yet? https://github.com/astral-sh/ty/issues/247
 invalid-argument-type = "ignore"
 
 [tool.ty.environment]
@@ -100,3 +101,11 @@ convention = "google"
 # don't format python in docstrings, pytest-examples takes care of it
 docstring-code-format = false
 # quote-style = "single"
+
+[tool.coverage.run]
+omit = [
+    "tests/*", # Excludes all files and subdirectories within a 'tests' directory at the project root
+]
+
+[tool.coverage.report]
+fail_under = 100

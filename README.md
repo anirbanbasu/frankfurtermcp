@@ -35,7 +35,7 @@ Frankfurter MCP will cache calls to the Frankfurter API to improve performance. 
 | `FAST_MCP_HOST` | [localhost] This variable specifies which host the MCP server must bind to unless the server transport (see below) is set to `stdio`. |
 | `FAST_MCP_PORT` | [8000] This variable specifies which port the MCP server must listen on unless the server transport (see below) is set to `stdio`. |
 | `MCP_SERVER_TRANSPORT` | [stdio] The acceptable options are `stdio`, `sse` or `streamable-http`. However, in the `.env.template`, the default value is set to `stdio`. |
-| `MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE` | [True] This specifies if additional metadata will be included with the MCP type `TextContent` that wraps the response data from each tool call. The additional metadata, for example, will include the API URL of the Frankfurter server, amongst others, that is used to obtain the responses. |
+| `MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE` | [True] This specifies if additional metadata will be included with the MCP  response from each tool call. The additional metadata, for example, will include the API URL of the Frankfurter server, amongst others, that is used to obtain the responses. |
 | `FRANKFURTER_API_URL` | [https://api.frankfurter.dev/v1] If you are [self-hosting the Frankfurter API](https://hub.docker.com/r/lineofflight/frankfurter), you should change this to the API endpoint address of your deployment. |
 | `LRU_CACHE_MAX_SIZE` | [1024] The maximum size of the least recently used (LRU) cache for API calls. |
 | `TTL_CACHE_MAX_SIZE` | [256] The maximum size of the time-to-live (TTL) cache for API calls. |
@@ -188,18 +188,16 @@ uv run --group test pytest tests/
 Invoke `just test-coverage` to run all the tests and generate a coverage report as follows. If all tests are run, the generated coverage report may look like the one below.
 
 ```bash
-Name                             Stmts   Miss  Cover
-----------------------------------------------------
-src/frankfurtermcp/__init__.py      10      0   100%
-src/frankfurtermcp/common.py        23      0   100%
-src/frankfurtermcp/mixin.py         52      4    92%
-src/frankfurtermcp/model.py         17      0   100%
-src/frankfurtermcp/server.py       111     20    82%
-tests/__init__.py                    0      0   100%
-tests/test_data_models.py           60      0   100%
-tests/test_server.py                71      0   100%
-----------------------------------------------------
-TOTAL                              344     24    93%
+Name                             Stmts   Miss  Cover   Missing
+--------------------------------------------------------------
+src/frankfurtermcp/__init__.py      22      0   100%
+src/frankfurtermcp/common.py         5      0   100%
+src/frankfurtermcp/mixin.py         47      0   100%
+src/frankfurtermcp/model.py         18      0   100%
+src/frankfurtermcp/server.py       117      0   100%
+--------------------------------------------------------------
+TOTAL                              209      0   100%
+Test coverage complete.
 ```
 
 # License
@@ -212,6 +210,7 @@ Following is a table of some updates regarding the project status. Note that the
 
 | Date     |  Status   |  Notes or observations   |
 |----------|:-------------:|----------------------|
+| November 26, 2025 |  active |  Using the new [`ToolResult` to package response metadata](https://gofastmcp.com/servers/tools#toolresult-and-metadata). |
 | November 21, 2025 |  active |  New tooling using `prek` (instead of `pre-commit`), `ty` (instead of `mypy`) and `just`. |
 | September 6, 2025 |  active |  Code refactoring and cleanup. |
 | June 27, 2025 |  active |  Successful remote deployments on Glama.AI and Smithery.AI. |
