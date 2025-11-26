@@ -106,15 +106,16 @@ class MCPMixin:
         else:  # pragma: no cover
             raise TypeError(
                 f"Unsupported data type: {type(response).__name__}. "
-                "Only str, int, float, complex, bool, dict, list, and Pydantic BaseModel types are supported for wrapping as TextContent."
+                "Only str, int, float, complex, bool, dict, list, and Pydantic BaseModel types are supported."
             )
         if text_content is not None:
             tool_result = ToolResult(content=[text_content])
         elif structured_content is not None:
             tool_result = ToolResult(content=structured_content)
         else:
-            raise ValueError(
-                f"Cannot construct either text_content or structured_content from the API response:\n{response}"
+            assert False, (
+                "Unreachable code reached in get_response_content. "
+                "Both text_content and structured_content should not have been None."
             )
         if include_metadata:
             tool_result.meta = {

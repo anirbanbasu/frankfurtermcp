@@ -35,6 +35,12 @@ format:
     @uv run ruff check --fix --fix-only
     @echo "Code formatted."
 
+# Run the type checker
+type-check:
+    @echo "Running type checker..."
+    @uv run ty check
+    @echo "Type checking complete."
+
 export MCP_SERVER_TRANSPORT := "streamable-http"
 # Run tests with coverage reporting
 test-coverage:
