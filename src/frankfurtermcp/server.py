@@ -16,6 +16,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from frankfurtermcp import EnvVar, lru_cache, ttl_cache
 from frankfurtermcp.common import AppMetadata
+from frankfurtermcp.middleware import StripUnknownArgumentsMiddleware
 from frankfurtermcp.mixin import HTTPHelperMixin, MCPMixin
 from frankfurtermcp.model import CurrencyConversionResponse
 
@@ -385,6 +386,7 @@ def app() -> FastMCP:
     )
     mcp_obj = FrankfurterMCP()
     app_with_features = mcp_obj.register_features(app)
+    app_with_features.add_middleware(StripUnknownArgumentsMiddleware())
     return app_with_features
 
 
@@ -407,7 +409,7 @@ def main():  # pragma: no cover
                         "Content-Type",
                     ],
                     expose_headers=["mcp-session-id"],
-                )
+                ),
             ]
 
             asgi_app = mcp_app.http_app(middleware=middleware, transport=transport_type)
