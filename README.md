@@ -187,15 +187,22 @@ uv run --group test pytest tests/
 Invoke `just test-coverage` to run all the tests and generate a coverage report as follows. If all tests are run, the generated coverage report may look like the one below.
 
 ```bash
-Name                             Stmts   Miss  Cover   Missing
---------------------------------------------------------------
-src/frankfurtermcp/__init__.py      22      0   100%
-src/frankfurtermcp/common.py         5      0   100%
-src/frankfurtermcp/mixin.py         47      0   100%
-src/frankfurtermcp/model.py         18      0   100%
-src/frankfurtermcp/server.py       117      0   100%
---------------------------------------------------------------
-TOTAL                              209      0   100%
+---------------------------------------------------------------------------------------- benchmark: 2 tests ---------------------------------------------------------------------------------------
+Name (time in ms)                         Min               Max              Mean            StdDev            Median               IQR            Outliers       OPS            Rounds  Iterations
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+test_get_historical_exchange_rates     4.4944 (1.0)      5.1512 (1.0)      4.7919 (1.0)      0.2460 (1.0)      4.7819 (1.0)      0.3249 (1.0)           2;0  208.6840 (1.0)           5           1
+test_get_latest_exchange_rates         4.7937 (1.07)     5.6976 (1.11)     5.3257 (1.11)     0.3345 (1.36)     5.4182 (1.13)     0.3575 (1.10)          2;0  187.7702 (0.90)          5           1
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Legend:
+  Outliers: 1 Standard Deviation from Mean; 1.5 IQR (InterQuartile Range) from 1st Quartile and 3rd Quartile.
+  OPS: Operations Per Second, computed as 1 / Mean
+=============================================================== 15 passed in 4.09s ===============================================================
+Name    Stmts   Miss    Cover   Missing
+---------------------------------------
+TOTAL     237      0  100.00%
+
+6 files skipped due to complete coverage.
 Test coverage complete.
 ```
 
@@ -209,6 +216,7 @@ Following is a table of some updates regarding the project status. Note that the
 
 | Date     |  Status   |  Notes or observations   |
 |----------|:-------------:|----------------------|
+| December 2, 2025 |  active |  Added a middleware to remove unknown tool arguments, such as [those passed by `n8n`](https://github.com/n8n-io/n8n/issues/21500). |
 | November 26, 2025 |  active |  Using the new [`ToolResult` to package response metadata](https://gofastmcp.com/servers/tools#toolresult-and-metadata). |
 | November 21, 2025 |  active |  New tooling using `prek` (instead of `pre-commit`), `ty` (instead of `mypy`) and `just`. |
 | September 6, 2025 |  active |  Code refactoring and cleanup. |
