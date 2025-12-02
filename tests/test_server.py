@@ -6,6 +6,7 @@ import pytest
 from fastmcp import Client, FastMCP
 
 from frankfurtermcp.common import AppMetadata
+from frankfurtermcp.middleware import StripUnknownArgumentsMiddleware
 from frankfurtermcp.model import ResponseMetadata
 from frankfurtermcp.server import FrankfurterMCP, app as frankfurtermcp_app
 
@@ -22,6 +23,7 @@ class TestMCPServer:
         server = FastMCP()
         mcp_obj = FrankfurterMCP()
         server_with_features = mcp_obj.register_features(server)
+        server_with_features.add_middleware(StripUnknownArgumentsMiddleware())
         return server_with_features
 
     @pytest.fixture(scope="class")
@@ -32,6 +34,7 @@ class TestMCPServer:
         mcp_obj = FrankfurterMCP()
         mcp_obj.frankfurter_api_url = "http://127.0.0.1:12345/nonexistent_endpoint"
         server_with_features = mcp_obj.register_features(server)
+        # We don't care about the middleware for this bogus config test
         return server_with_features
 
     @pytest.fixture(scope="class", autouse=True)
