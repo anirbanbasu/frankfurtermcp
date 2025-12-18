@@ -71,6 +71,14 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
                 "openWorldHint": True,
             },
         },
+        {
+            "fn": "greet",
+            "tags": ["greet", "hello-world"],
+            "annotations": {
+                "readOnlyHint": True,
+                "openWorldHint": True,
+            },
+        },
     ]
 
     async def get_supported_currencies(self, ctx: Context):
@@ -373,6 +381,17 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
             rate_date=date_specific_rates["date"],
         )
         return self.get_response_content(response=result, http_response=http_response, cached_response=cache_hit)
+
+    async def greet(
+        self,
+        ctx: Context,
+        name: str | None = None,
+    ):
+        """A simple greeting tool to demonstrate middleware functionality."""
+        greeting_name = name if name else "World"
+        greeting_message = f"Hello, {greeting_name} from Frankfurter MCP!"
+        await ctx.info(f"Greeting generated: {greeting_message}")
+        return self.get_response_content(response=greeting_message)
 
 
 def app() -> FastMCP:

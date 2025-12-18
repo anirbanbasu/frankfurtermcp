@@ -164,6 +164,7 @@ The following table lists the names of the tools as exposed by the FrankfurterMC
 | `convert_currency_latest` | Convert an amount from one currency to another using the latest exchange rates. |
 | `get_historical_exchange_rates` | Get historical exchange rates for a specific date or date range in specific currencies for a given base currency. |
 | `convert_currency_specific_date` | Convert an amount from one currency to another using the exchange rates for a specific date. |
+| `greet` | Get a greeting from the FrankfurterMCP server. _This is mostly used for internal testing_. |
 
 The required and optional arguments for each tool are not listed in the following table for brevity but are available to the MCP client over the protocol.
 
@@ -200,7 +201,7 @@ Legend:
 =============================================================== 15 passed in 4.09s ===============================================================
 Name    Stmts   Miss    Cover   Missing
 ---------------------------------------
-TOTAL     237      0  100.00%
+TOTAL     243      0  100.00%
 
 6 files skipped due to complete coverage.
 Test coverage complete.
