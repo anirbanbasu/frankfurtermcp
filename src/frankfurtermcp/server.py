@@ -419,7 +419,7 @@ def main():  # pragma: no cover
             middleware = [
                 Middleware(
                     CORSMiddleware,
-                    allow_origins=["*"],  # Allow all origins; use specific origins for security
+                    allow_origins=EnvVar.CORS_MIDDLEWARE_ALLOW_ORIGINS,
                     allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
                     allow_headers=[
                         "mcp-protocol-version",
@@ -432,6 +432,15 @@ def main():  # pragma: no cover
             ]
 
             asgi_app = mcp_app.http_app(middleware=middleware, transport=transport_type)
+            if "*" in EnvVar.CORS_MIDDLEWARE_ALLOW_ORIGINS:
+                logger.warning(
+                    "Cross-Origin Resource Sharing (CORS) allowed origins contains '*', which allows requests from any origin. "
+                    "This is not recommended for production deployments due to security risks. "
+                    "To learn more about CORS, see: https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS."
+                )
+            logger.info(
+                f"Starting server with Cross-Origin Resource Sharing (CORS) allowed origins: {', '.join(EnvVar.CORS_MIDDLEWARE_ALLOW_ORIGINS)}"
+            )
             uvicorn.run(
                 asgi_app,
                 host=EnvVar.FASTMCP_HOST,

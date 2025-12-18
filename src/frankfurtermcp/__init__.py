@@ -33,6 +33,8 @@ class EnvVar:
     TTL_CACHE_MAX_SIZE = env.int("TTL_CACHE_MAX_SIZE", default=256)
     TTL_CACHE_TTL_SECONDS = env.int("TTL_CACHE_TTL_SECONDS", default=900)
 
+    CORS_MIDDLEWARE_ALLOW_ORIGINS = env.list("CORS_MIDDLEWARE_ALLOW_ORIGINS", default=["localhost", "127.0.0.1"])
+
 
 logging.basicConfig(
     level=EnvVar.LOG_LEVEL,
