@@ -7,8 +7,6 @@ from fastmcp import Client, FastMCP
 from frankfurtermcp.middleware import StripUnknownArgumentsMiddleware
 from frankfurtermcp.server import FrankfurterMCP
 
-logger = logging.getLogger(__name__)
-
 
 class TestStripUnknownArgumentsMiddleware:
     """Dedicated test class for the StripUnknownArgumentsMiddleware."""
