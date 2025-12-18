@@ -20,8 +20,12 @@ class ResponseMetadata(BaseModel):
     """Metadata for MCP response."""
 
     version: Annotated[str, Field(description="The version of the package.")]
-    api_url: HttpUrl = Field(description="The URL of the Frankfurter API used for the call.")
-    api_status_code: int = Field(description="The HTTP status code of the API response.")
-    api_bytes_downloaded: PositiveInt = Field(description="The number of bytes downloaded in the API response.")
-    api_elapsed_time: PositiveInt = Field(description="The elapsed time for the API call in microseconds.")
+    api_url: HttpUrl | None = Field(description="The URL of the Frankfurter API used for the call.", default=None)
+    api_status_code: int | None = Field(description="The HTTP status code of the API response.", default=None)
+    api_bytes_downloaded: PositiveInt | None = Field(
+        description="The number of bytes downloaded in the API response.", default=None
+    )
+    api_elapsed_time: PositiveInt | None = Field(
+        description="The elapsed time for the API call in microseconds.", default=None
+    )
     cached_response: bool = Field(description="Indicates if the response was served from cache.", default=False)

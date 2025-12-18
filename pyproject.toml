@@ -1,6 +1,6 @@
 [project]
 name = "frankfurtermcp"
-version = "0.4.2"
+version = "0.4.3"
 description = "A MCP server for currency exchange rates and currency conversion using the Frankfurter API."
 readme = {file = "README.md", content-type = "text/markdown"}
 license = "MIT"

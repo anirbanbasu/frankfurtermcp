@@ -71,6 +71,14 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
                 "openWorldHint": True,
             },
         },
+        {
+            "fn": "greet",
+            "tags": ["greet", "hello-world"],
+            "annotations": {
+                "readOnlyHint": True,
+                "openWorldHint": True,
+            },
+        },
     ]
 
     async def get_supported_currencies(self, ctx: Context):
@@ -374,6 +382,17 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
         )
         return self.get_response_content(response=result, http_response=http_response, cached_response=cache_hit)
 
+    async def greet(
+        self,
+        ctx: Context,
+        name: str | None = None,
+    ):
+        """A simple greeting tool to demonstrate middleware functionality."""
+        greeting_name = name if name else "World"
+        greeting_message = f"Hello, {greeting_name} from Frankfurter MCP!"
+        await ctx.info(f"Greeting generated: {greeting_message}")
+        return self.get_response_content(response=greeting_message)
+
 
 def app() -> FastMCP:
     """Create and configure the FastMCP application for the Frankfurter MCP server."""
@@ -400,7 +419,7 @@ def main():  # pragma: no cover
             middleware = [
                 Middleware(
                     CORSMiddleware,
-                    allow_origins=["*"],  # Allow all origins; use specific origins for security
+                    allow_origins=EnvVar.CORS_MIDDLEWARE_ALLOW_ORIGINS,
                     allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
                     allow_headers=[
                         "mcp-protocol-version",
@@ -413,6 +432,15 @@ def main():  # pragma: no cover
             ]
 
             asgi_app = mcp_app.http_app(middleware=middleware, transport=transport_type)
+            if "*" in EnvVar.CORS_MIDDLEWARE_ALLOW_ORIGINS:
+                logger.warning(
+                    "Cross-Origin Resource Sharing (CORS) allowed origins contains '*', which allows requests from any origin. "
+                    "This is not recommended for production deployments due to security risks. "
+                    "To learn more about CORS, see: https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS."
+                )
+            logger.info(
+                f"Starting server with Cross-Origin Resource Sharing (CORS) allowed origins: {', '.join(EnvVar.CORS_MIDDLEWARE_ALLOW_ORIGINS)}"
+            )
             uvicorn.run(
                 asgi_app,
                 host=EnvVar.FASTMCP_HOST,

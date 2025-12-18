@@ -6,7 +6,6 @@ import pytest
 from fastmcp import Client, FastMCP
 
 from frankfurtermcp.common import AppMetadata
-from frankfurtermcp.middleware import StripUnknownArgumentsMiddleware
 from frankfurtermcp.model import ResponseMetadata
 from frankfurtermcp.server import FrankfurterMCP, app as frankfurtermcp_app
 
@@ -23,7 +22,7 @@ class TestMCPServer:
         server = FastMCP()
         mcp_obj = FrankfurterMCP()
         server_with_features = mcp_obj.register_features(server)
-        server_with_features.add_middleware(StripUnknownArgumentsMiddleware())
+        # We don't really need to test the middleware here since it has its own dedicated tests
         return server_with_features
 
     @pytest.fixture(scope="class")
@@ -71,8 +70,8 @@ class TestMCPServer:
         mcp_server = frankfurtermcp_app()
         assert isinstance(mcp_server, FastMCP), "Expected mcp_server to be an instance of FastMCP"
         tools_list = asyncio.run(mcp_server.get_tools())
-        assert len(tools_list) == 5, (
-            f"Expected exactly 5 tools to be registered in the MCP server, got {len(tools_list)}"
+        assert len(tools_list) == 6, (
+            f"Expected exactly 6 tools to be registered in the MCP server, got {len(tools_list)}"
         )
 
     def test_get_supported_currencies(self, mcp_client, mcp_client_bogus_config):

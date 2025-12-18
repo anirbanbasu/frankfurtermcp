@@ -34,6 +34,7 @@ Frankfurter MCP will cache calls to the Frankfurter API to improve performance. 
 | `HTTPX_VERIFY_SSL` | [True] This variable can be set to False to turn off SSL certificate verification, if, for instance, you are using a proxy server with a self-signed certificate. However, setting this to False _is advised against_: instead, use the `SSL_CERT_FILE` and `SSL_CERT_DIR` variables to properly configure self-signed certificates. |
 | `FAST_MCP_HOST` | [localhost] This variable specifies which host the MCP server must bind to unless the server transport (see below) is set to `stdio`. |
 | `FAST_MCP_PORT` | [8000] This variable specifies which port the MCP server must listen on unless the server transport (see below) is set to `stdio`. |
+| `CORS_MIDDLEWARE_ALLOW_ORIGINS` | ["localhost", "127.0.0.1"] This variable specifies [Cross-Origin Resource Sharing (CORS)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS) allowed origins for the MCP server unless the server transport (see below) is set to `stdio`. You **must** set it to "*" explicitly (and you will get a warning by doing so) if you want to test this server over a HTTP transport using the MCP inspector described below. |
 | `MCP_SERVER_TRANSPORT` | [stdio] The acceptable options are `stdio`, `sse` or `streamable-http`. However, in the `.env.template`, the default value is set to `stdio`. |
 | `MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE` | [True] This specifies if additional metadata will be included with the MCP  response from each tool call. The additional metadata, for example, will include the API URL of the Frankfurter server, amongst others, that is used to obtain the responses. |
 | `FRANKFURTER_API_URL` | [https://api.frankfurter.dev/v1] If you are [self-hosting the Frankfurter API](https://hub.docker.com/r/lineofflight/frankfurter), you should change this to the API endpoint address of your deployment. |
@@ -164,6 +165,7 @@ The following table lists the names of the tools as exposed by the FrankfurterMC
 | `convert_currency_latest` | Convert an amount from one currency to another using the latest exchange rates. |
 | `get_historical_exchange_rates` | Get historical exchange rates for a specific date or date range in specific currencies for a given base currency. |
 | `convert_currency_specific_date` | Convert an amount from one currency to another using the exchange rates for a specific date. |
+| `greet` | Get a greeting from the FrankfurterMCP server. _This is mostly used for internal testing_. |
 
 The required and optional arguments for each tool are not listed in the following table for brevity but are available to the MCP client over the protocol.
 
@@ -200,7 +202,7 @@ Legend:
 =============================================================== 15 passed in 4.09s ===============================================================
 Name    Stmts   Miss    Cover   Missing
 ---------------------------------------
-TOTAL     237      0  100.00%
+TOTAL     244      0  100.00%
 
 6 files skipped due to complete coverage.
 Test coverage complete.

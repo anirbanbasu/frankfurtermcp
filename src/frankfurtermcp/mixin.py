@@ -74,7 +74,7 @@ class MCPMixin:
     def get_response_content(
         self,
         response: Any,
-        http_response: httpx.Response,
+        http_response: httpx.Response | None = None,
         include_metadata: bool = EnvVar.MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE,
         cached_response: bool = False,
     ) -> ToolResult:
@@ -95,10 +95,13 @@ class MCPMixin:
         structured_content: dict[str, Any] | None = None
         if isinstance(response, TextContent):  # pragma: no cover
             text_content = response
+            structured_content = {"result": response.text}
         elif isinstance(response, (str, int, float, complex, bool, type(None))):  # pragma: no cover
             text_content = TextContent(type=literal_text, text=str(response))
+            structured_content = {"result": response}
         elif isinstance(response, list):  # pragma: no cover
             text_content = TextContent(type=literal_text, text=json.dumps(response))
+            structured_content = {"result": response}
         elif isinstance(response, dict):
             structured_content = response
         elif isinstance(response, BaseModel):
@@ -109,7 +112,7 @@ class MCPMixin:
                 "Only str, int, float, complex, bool, dict, list, and Pydantic BaseModel types are supported."
             )
         if text_content is not None:
-            tool_result = ToolResult(content=[text_content])
+            tool_result = ToolResult(content=[text_content], structured_content=structured_content)
         elif structured_content is not None:
             tool_result = ToolResult(content=structured_content)
         else:
@@ -121,10 +124,10 @@ class MCPMixin:
             tool_result.meta = {
                 AppMetadata.PACKAGE_NAME: ResponseMetadata(
                     version=AppMetadata.package_metadata["Version"],
-                    api_url=HttpUrl(self.frankfurter_api_url),
-                    api_status_code=http_response.status_code,
-                    api_bytes_downloaded=http_response.num_bytes_downloaded,
-                    api_elapsed_time=http_response.elapsed.microseconds,
+                    api_url=HttpUrl(self.frankfurter_api_url) if http_response else None,
+                    api_status_code=http_response.status_code if http_response else None,
+                    api_bytes_downloaded=http_response.num_bytes_downloaded if http_response else None,
+                    api_elapsed_time=http_response.elapsed.microseconds if http_response else None,
                     cached_response=cached_response,
                 ).model_dump(),
             }
