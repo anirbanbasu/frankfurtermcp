@@ -432,6 +432,12 @@ def main():  # pragma: no cover
             ]
 
             asgi_app = mcp_app.http_app(middleware=middleware, transport=transport_type)
+            if EnvVar.FASTMCP_HOST == "0.0.0.0":
+                logger.warning(
+                    "The server is configured to listen on all IPs ('0.0.0.0'), which may expose it to external network traffic. "
+                    "This is not recommended for production deployments due to security risks. "
+                    "Should you need to expose the server to external traffic, consider using a reverse proxy with proper security measures in place."
+                )
             if "*" in EnvVar.CORS_MIDDLEWARE_ALLOW_ORIGINS:
                 logger.warning(
                     "Cross-Origin Resource Sharing (CORS) allowed origins contains '*', which allows requests from any origin. "
