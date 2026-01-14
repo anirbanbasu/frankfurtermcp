@@ -35,6 +35,19 @@ class EnvVar:
 
     CORS_MIDDLEWARE_ALLOW_ORIGINS = env.list("CORS_MIDDLEWARE_ALLOW_ORIGINS", default=["localhost", "127.0.0.1"])
 
+    # Uvicorn server limits
+    UVICORN_LIMIT_CONCURRENCY = env.int("UVICORN_LIMIT_CONCURRENCY", default=100)
+    UVICORN_LIMIT_MAX_REQUESTS = env.int("UVICORN_LIMIT_MAX_REQUESTS", default=10000)
+    UVICORN_TIMEOUT_KEEP_ALIVE = env.int("UVICORN_TIMEOUT_KEEP_ALIVE", default=60)
+    UVICORN_TIMEOUT_GRACEFUL_SHUTDOWN = env.int("UVICORN_TIMEOUT_GRACEFUL_SHUTDOWN", default=5)
+
+    # Rate limiting
+    RATE_LIMIT_MAX_REQUESTS_PER_SECOND = env.float("RATE_LIMIT_MAX_REQUESTS_PER_SECOND", default=10.0)
+    RATE_LIMIT_BURST_CAPACITY = env.int("RATE_LIMIT_BURST_CAPACITY", default=20)
+
+    # Request size limit
+    REQUEST_SIZE_LIMIT_BYTES = env.int("REQUEST_SIZE_LIMIT_BYTES", default=102400)  # 100KB default
+
 
 logging.basicConfig(
     level=EnvVar.LOG_LEVEL,

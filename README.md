@@ -41,6 +41,13 @@ Frankfurter MCP will cache calls to the Frankfurter API to improve performance. 
 | `LRU_CACHE_MAX_SIZE` | [1024] The maximum size of the least recently used (LRU) cache for API calls. |
 | `TTL_CACHE_MAX_SIZE` | [256] The maximum size of the time-to-live (TTL) cache for API calls. |
 | `TTL_CACHE_TTL_SECONDS` | [900] The time limit, in seconds, of the time-to-live (TTL) cache for API calls. |
+| `UVICORN_LIMIT_CONCURRENCY` | [100] The maximum number of concurrent connections the server will accept. This helps prevent resource exhaustion from too many simultaneous connections. Only applies when using HTTP transports (`sse` or `streamable-http`). |
+| `UVICORN_LIMIT_MAX_REQUESTS` | [10000] The maximum number of requests a worker will process before being restarted. This helps prevent memory leaks from accumulating over time. Only applies when using HTTP transports (`sse` or `streamable-http`). |
+| `UVICORN_TIMEOUT_KEEP_ALIVE` | [60] The timeout in seconds for keeping idle connections alive. Idle connections will be closed after this period to free up resources. Only applies when using HTTP transports (`sse` or `streamable-http`). |
+| `UVICORN_TIMEOUT_GRACEFUL_SHUTDOWN` | [5] The timeout in seconds for graceful shutdown. The server will wait this long for active connections to complete before forcefully shutting down. Only applies when using HTTP transports (`sse` or `streamable-http`). |
+| `RATE_LIMIT_MAX_REQUESTS_PER_SECOND` | [10.0] The maximum number of requests allowed per second using a token bucket algorithm. This implements rate limiting to prevent API abuse and ensure fair resource allocation. |
+| `RATE_LIMIT_BURST_CAPACITY` | [20] The burst capacity for the rate limiter, allowing short bursts of requests above the per-second limit. This provides flexibility for legitimate usage patterns while still protecting against sustained high request rates. |
+| `REQUEST_SIZE_LIMIT_BYTES` | [102400] The maximum size in bytes for HTTP request bodies (default 100KB). Requests exceeding this limit will be rejected with a 413 status code. This prevents memory exhaustion attacks from large payloads. Only applies when using HTTP transports (`sse` or `streamable-http`). |
 
 # Usage
 

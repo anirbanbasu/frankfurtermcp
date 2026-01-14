@@ -3,8 +3,14 @@ import logging
 
 import pytest
 from fastmcp import Client, FastMCP
+from starlette.applications import Starlette
+from starlette.middleware import Middleware
+from starlette.requests import Request
+from starlette.responses import JSONResponse
+from starlette.routing import Route
+from starlette.testclient import TestClient
 
-from frankfurtermcp.middleware import StripUnknownArgumentsMiddleware
+from frankfurtermcp.middleware import RequestSizeLimitMiddleware, StripUnknownArgumentsMiddleware
 from frankfurtermcp.server import FrankfurterMCP
 
 
@@ -160,3 +166,79 @@ class TestStripUnknownArgumentsMiddleware:
         assert "unknown1" in log_messages, "Expected 'unknown1' in logs"
         assert "unknown2" in log_messages, "Expected 'unknown2' in logs"
         assert "unknown3" in log_messages, "Expected 'unknown3' in logs"
+
+
+class TestRequestSizeLimitMiddleware:
+    """Dedicated test class for the RequestSizeLimitMiddleware."""
+
+    @pytest.fixture
+    def app(self):
+        """Fixture to create a Starlette app with RequestSizeLimitMiddleware."""
+
+        async def test_endpoint(request: Request):
+            """Test endpoint that returns request body size."""
+            body = await request.body()
+            return JSONResponse({"size": len(body), "message": "success"})
+
+        app = Starlette(
+            routes=[Route("/test", test_endpoint, methods=["POST"])],
+            middleware=[
+                Middleware(RequestSizeLimitMiddleware, max_body_size=1024)  # 1KB limit for testing
+            ],
+        )
+        return app
+
+    @pytest.fixture
+    def client(self, app):
+        """Fixture to create a test client."""
+        return TestClient(app)
+
+    def test_request_within_size_limit(self, client):
+        """Test that requests within the size limit are processed successfully."""
+        # Create a payload smaller than the 1KB limit
+        payload = "x" * 512  # 512 bytes
+        response = client.post("/test", content=payload)
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["size"] == 512
+        assert data["message"] == "success"
+
+    def test_request_exactly_at_size_limit(self, client):
+        """Test that requests exactly at the size limit are processed successfully."""
+        # Create a payload exactly at the 1KB limit
+        payload = "x" * 1024  # 1024 bytes
+        response = client.post("/test", content=payload)
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["size"] == 1024
+        assert data["message"] == "success"
+
+    def test_request_exceeds_size_limit(self, client):
+        """Test that requests exceeding the size limit are rejected with 413."""
+        # Create a payload larger than the 1KB limit
+        payload = "x" * 2048  # 2048 bytes
+        response = client.post("/test", content=payload)
+
+        assert response.status_code == 413
+        assert response.text == "Request body is too large. Allowed maximum size is 1024 bytes."
+
+    def test_request_without_content_length(self, client):
+        """Test that requests without Content-Length header are processed normally."""
+        # Requests without Content-Length header should pass through
+        # TestClient should still set Content-Length, so we test with empty body
+        response = client.post("/test", content="")
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["size"] == 0
+
+    def test_large_request_far_exceeds_limit(self, client):
+        """Test that very large requests are rejected."""
+        # Create a payload much larger than the limit
+        payload = "x" * 10240  # 10KB, much larger than 1KB limit
+        response = client.post("/test", content=payload)
+
+        assert response.status_code == 413
+        assert response.text == "Request body is too large. Allowed maximum size is 1024 bytes."
