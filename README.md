@@ -238,6 +238,18 @@ Test coverage complete.
 
 [MIT](https://choosealicense.com/licenses/mit/).
 
+# Security considerations
+
+This section documents security-related findings from vulnerability scans and provides context for deployment decisions.
+
+## Airtable vulnerability scan findings and rationale
+
+Check for security-related findings from [the Airtable vulnerability scan](https://airtable.com/appXjXF6ejJL028Rl/shrwBNQSIDMCo00jO) (search for `frankfurtermcp`) below, along with rationale and counter-arguments.
+
+| Rule ID | Issue and counter arguments |
+|----------------------|-------------------|
+| MCP-R005 | **Issue**: There is no TLS enforcement when the server is set to listen on `0.0.0.0`, e.g., in the `smithery.dockerfile`.<br/><br/>**Counter arguments**: This configuration is a requirement for deployment on [Smithery](https://smithery.ai/), which functions as an MCP gateway. Smithery provides its own security layer including TLS termination, authentication, and access control. If TLS requirement is enforced in the code, the Smithery deployment will fail. For local deployments, users should use the `.env.template` defaults (`127.0.0.1`) or deploy behind their own reverse proxy with appropriate security controls. The warning in the code serves to alert users when binding to all interfaces. |
+
 # Project status
 
 Following is a table of some updates regarding the project status. Note that these do not correspond to specific commits or milestones.
