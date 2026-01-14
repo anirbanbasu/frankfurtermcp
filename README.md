@@ -79,16 +79,34 @@ python -m frankfurtermcp.server
 There are two Dockerfiles provided in this repository.
 
  - `local.dockerfile` for containerising the Frankfurter MCP server.
- - `smithery.dockerfile` for deploying to [Smithery AI](https://smithery.ai/), which you do not have to use.
+ - `smithery.dockerfile` for deploying to [Smithery AI](https://smithery.ai/), which you do not have to use. Note that runtime hardening of the container based on this Dockerfile is not provided in this repository through Docker Compose because this is managed by Smithery AI during deployment.
 
-To build the image, create the container and start it, run the following in _WD_. _Choose shorter names for the image and container if you prefer._
+First, make a copy of the `.env.template` to a `.env` file. Then, modify the following variables in the `.env` file as needed.
 
-If you change the port to anything other than 8000 in `.env.template`, _do remember to change the port number references in the following command_. Instead of passing all the environment variables using the `--env-file` option, you can also pass individual environment variables using the `-e` option.
+ - `FASTMCP_HOST`: Set to `0.0.0.0` to allow external access to the container.
+ - `CORS_MIDDLEWARE_ALLOW_ORIGINS`: Set to `*` to allow external access to the MCP server from any origin. _This is needed if you want to test the server using the MCP Inspector over HTTP transport_.
+
+To build the image, create the container and start it using Docker Compose, run the following in _WD_.
+
+If you change the port to anything other than 8000 in `.env`, _do remember to change the port number in `docker-compose.yml`_. Instead of using the `.env` file, you can also modify `docker-compose.yml` to pass individual environment variables using the `environment` section.
 
 ```bash
-docker build -t frankfurtermcp -f local.dockerfile .
-docker run -it --rm -p 8000:8000/tcp --env-file .env.template --expose 8000 frankfurtermcp
+docker compose up --build
 ```
+
+To run in detached mode (background), add the `-d` flag:
+
+```bash
+docker compose up -d --build
+```
+
+To stop the container:
+
+```bash
+docker compose down
+```
+
+The `docker-compose.yml` file includes security hardening with read-only filesystem, dropped capabilities, seccomp and AppArmor profiles, and resource limits (512MB memory, 1 CPU).
 
 Upon successful build and container start, the MCP server will be available over HTTP at [http://localhost:8000/sse](http://localhost:8000/sse) for the Server Sent Events (SSE) transport, or [http://localhost:8000/mcp](http://localhost:8000/mcp) for the streamable HTTP transport.
 

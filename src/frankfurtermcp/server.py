@@ -398,7 +398,9 @@ def app() -> FastMCP:
     """Create and configure the FastMCP application for the Frankfurter MCP server."""
     app = FastMCP(
         name=AppMetadata.package_metadata["Name"],
-        instructions=AppMetadata.package_metadata["Description"],
+        instructions=AppMetadata.package_metadata["Summary"],
+        version=AppMetadata.package_metadata["Version"],
+        website_url=AppMetadata.PROJECT_URL,
         on_duplicate_prompts="error",
         on_duplicate_resources="error",
         on_duplicate_tools="error",
