@@ -256,6 +256,7 @@ Following is a table of some updates regarding the project status. Note that the
 
 | Date     |  Status   |  Notes or observations   |
 |----------|:-------------:|----------------------|
+| January 15, 2025 |  active |  Improved code with rate and size limiting middleware. |
 | December 2, 2025 |  active |  Added a middleware to remove unknown tool arguments, such as [those passed by `n8n`](https://github.com/n8n-io/n8n/issues/21500). |
 | November 26, 2025 |  active |  Using the new [`ToolResult` to package response metadata](https://gofastmcp.com/servers/tools#toolresult-and-metadata). |
 | November 21, 2025 |  active |  New tooling using `prek` (instead of `pre-commit`), `ty` (instead of `mypy`) and `just`. |
