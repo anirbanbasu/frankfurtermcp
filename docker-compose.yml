@@ -1,0 +1,25 @@
+services:
+  frankfurtermcp:
+    build:
+      context: .
+      dockerfile: local.dockerfile
+    image: frankfurtermcp:latest
+    container_name: frankfurtermcp
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    # Security hardening
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=${DOCKER_TMPFS_SIZE_MB:-100}m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+      - apparmor:docker-default
+    # Resource limits
+    mem_limit: 512m
+    cpus: 1.0
+    # Restart policy
+    restart: unless-stopped

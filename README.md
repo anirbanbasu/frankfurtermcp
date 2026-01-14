@@ -32,15 +32,23 @@ Frankfurter MCP will cache calls to the Frankfurter API to improve performance. 
 | `LOG_LEVEL` | [INFO] The level for logging. Changing this level also affects the log output of other dependent libraries that may use the same environment variable. See valid values at [Python logging documentation](https://docs.python.org/3/library/logging.html#logging-levels). |
 | `HTTPX_TIMEOUT` | [5.0] The time for the underlying HTTP client to wait, in seconds, for a response from the Frankfurter API. |
 | `HTTPX_VERIFY_SSL` | [True] This variable can be set to False to turn off SSL certificate verification, if, for instance, you are using a proxy server with a self-signed certificate. However, setting this to False _is advised against_: instead, use the `SSL_CERT_FILE` and `SSL_CERT_DIR` variables to properly configure self-signed certificates. |
-| `FAST_MCP_HOST` | [localhost] This variable specifies which host the MCP server must bind to unless the server transport (see below) is set to `stdio`. |
+| `FAST_MCP_HOST` | [localhost] This variable specifies which host the MCP server must bind to unless the server transport (see below) is set to `stdio`. _Note that running the server to bind to any IP by specifying `0.0.0.0` poses a security threat. Such a setting should only be used in demo environments._|
 | `FAST_MCP_PORT` | [8000] This variable specifies which port the MCP server must listen on unless the server transport (see below) is set to `stdio`. |
-| `CORS_MIDDLEWARE_ALLOW_ORIGINS` | ["localhost", "127.0.0.1"] This variable specifies [Cross-Origin Resource Sharing (CORS)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS) allowed origins for the MCP server unless the server transport (see below) is set to `stdio`. You **must** set it to "*" explicitly (and you will get a warning by doing so) if you want to test this server over a HTTP transport using the MCP inspector described below. |
+| `CORS_MIDDLEWARE_ALLOW_ORIGINS` | ["localhost", "127.0.0.1"] This variable specifies [Cross-Origin Resource Sharing (CORS)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS) allowed origins for the MCP server unless the server transport (see below) is set to `stdio`. You **must** set it to "*" explicitly (and you will get a warning by doing so) if you want to test this server over an HTTP transport using [the MCP inspector described below](https://github.com/anirbanbasu/frankfurtermcp?tab=readme-ov-file#the-official-mcp-visual-inspector). |
 | `MCP_SERVER_TRANSPORT` | [stdio] The acceptable options are `stdio`, `sse` or `streamable-http`. However, in the `.env.template`, the default value is set to `stdio`. |
 | `MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE` | [True] This specifies if additional metadata will be included with the MCP  response from each tool call. The additional metadata, for example, will include the API URL of the Frankfurter server, amongst others, that is used to obtain the responses. |
 | `FRANKFURTER_API_URL` | [https://api.frankfurter.dev/v1] If you are [self-hosting the Frankfurter API](https://hub.docker.com/r/lineofflight/frankfurter), you should change this to the API endpoint address of your deployment. |
 | `LRU_CACHE_MAX_SIZE` | [1024] The maximum size of the least recently used (LRU) cache for API calls. |
 | `TTL_CACHE_MAX_SIZE` | [256] The maximum size of the time-to-live (TTL) cache for API calls. |
 | `TTL_CACHE_TTL_SECONDS` | [900] The time limit, in seconds, of the time-to-live (TTL) cache for API calls. |
+| `UVICORN_LIMIT_CONCURRENCY` | [100] The maximum number of concurrent connections the server will accept. This helps prevent resource exhaustion from too many simultaneous connections. Only applies when using HTTP transports (`sse` or `streamable-http`). |
+| `UVICORN_LIMIT_MAX_REQUESTS` | [10000] The maximum number of requests a worker will process before being restarted. This helps prevent memory leaks from accumulating over time. Only applies when using HTTP transports (`sse` or `streamable-http`). |
+| `UVICORN_TIMEOUT_KEEP_ALIVE` | [60] The timeout in seconds for keeping idle connections alive. Idle connections will be closed after this period to free up resources. Only applies when using HTTP transports (`sse` or `streamable-http`). |
+| `UVICORN_TIMEOUT_GRACEFUL_SHUTDOWN` | [5] The timeout in seconds for graceful shutdown. The server will wait this long for active connections to complete before forcefully shutting down. Only applies when using HTTP transports (`sse` or `streamable-http`). |
+| `RATE_LIMIT_MAX_REQUESTS_PER_SECOND` | [10.0] The maximum number of requests allowed per second using a token bucket algorithm. This implements rate limiting to prevent API abuse and ensure fair resource allocation. |
+| `RATE_LIMIT_BURST_CAPACITY` | [20] The burst capacity for the rate limiter, allowing short bursts of requests above the per-second limit. This provides flexibility for legitimate usage patterns while still protecting against sustained high request rates. |
+| `REQUEST_SIZE_LIMIT_BYTES` | [102400] The maximum size in bytes for HTTP request bodies (default 100KB). Requests exceeding this limit will be rejected with a 413 status code. This prevents memory exhaustion attacks from large payloads. Only applies when using HTTP transports (`sse` or `streamable-http`). |
+| `DOCKER_TMPFS_SIZE_MB` | [100] The size in megabytes for the temporary filesystem (`/tmp`) when running in Docker with read-only root filesystem. This temporary storage is used for runtime file operations. Increase this value if the application requires more temporary storage for caching or processing large datasets. Only relevant when deploying with Docker Compose. |
 
 # Usage
 
@@ -79,16 +87,34 @@ python -m frankfurtermcp.server
 There are two Dockerfiles provided in this repository.
 
  - `local.dockerfile` for containerising the Frankfurter MCP server.
- - `smithery.dockerfile` for deploying to [Smithery AI](https://smithery.ai/), which you do not have to use.
+ - `smithery.dockerfile` for deploying to [Smithery AI](https://smithery.ai/), which you do not have to use. Note that runtime hardening of the container based on this Dockerfile is not provided in this repository through Docker Compose because this is managed by Smithery AI during deployment.
 
-To build the image, create the container and start it, run the following in _WD_. _Choose shorter names for the image and container if you prefer._
+First, make a copy of the `.env.template` to a `.env` file. Then, modify the following variables in the `.env` file as needed.
 
-If you change the port to anything other than 8000 in `.env.template`, _do remember to change the port number references in the following command_. Instead of passing all the environment variables using the `--env-file` option, you can also pass individual environment variables using the `-e` option.
+ - `FASTMCP_HOST`: Set to `0.0.0.0` to allow external access to the container. _This is only for local testing and is not recommended for production deployments_.
+ - `CORS_MIDDLEWARE_ALLOW_ORIGINS`: Set to `*` to allow external access to the MCP server from any origin. _This is needed if you want to test the server using the MCP Inspector over HTTP transport and is not recommended for production deployments_.
+
+To build the image, create the container and start it using Docker Compose, run the following in _WD_.
+
+If you change the port to anything other than 8000 in `.env`, _do remember to change the port number in `docker-compose.yml`_. Instead of using the `.env` file, you can also modify `docker-compose.yml` to pass individual environment variables using the `environment` section.
 
 ```bash
-docker build -t frankfurtermcp -f local.dockerfile .
-docker run -it --rm -p 8000:8000/tcp --env-file .env.template --expose 8000 frankfurtermcp
+docker compose up --build
 ```
+
+To run in detached mode (background), add the `-d` flag:
+
+```bash
+docker compose up -d --build
+```
+
+To stop the container:
+
+```bash
+docker compose down
+```
+
+The `docker-compose.yml` file includes security hardening with read-only filesystem, dropped capabilities, seccomp and AppArmor profiles, and resource limits (512MB memory, 1 CPU).
 
 Upon successful build and container start, the MCP server will be available over HTTP at [http://localhost:8000/sse](http://localhost:8000/sse) for the Server Sent Events (SSE) transport, or [http://localhost:8000/mcp](http://localhost:8000/mcp) for the streamable HTTP transport.
 

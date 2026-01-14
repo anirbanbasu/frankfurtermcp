@@ -49,7 +49,7 @@ class MCPMixin:
             tool_copy = copy.deepcopy(tool)
             fn_name = tool_copy.pop("fn")
             fn = getattr(self, fn_name)
-            mcp.tool(**tool_copy)(fn)  # ty: ignore[call-non-callable]
+            mcp.tool(**tool_copy)(fn)
             logger.debug(f"Registered MCP tool: {fn_name}")
         # Register resources
         for res in self.resources:  # pragma: no cover
@@ -66,7 +66,7 @@ class MCPMixin:
             pr_copy = copy.deepcopy(pr)
             fn_name = pr_copy.pop("fn")
             fn = getattr(self, fn_name)
-            mcp.prompt(**pr_copy)(fn)  # ty: ignore[call-non-callable]
+            mcp.prompt(**pr_copy)(fn)
             logger.debug(f"Registered MCP prompt: {fn_name}")
 
         return mcp

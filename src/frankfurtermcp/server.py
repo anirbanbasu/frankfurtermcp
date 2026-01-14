@@ -6,9 +6,10 @@ from typing import Annotated
 
 import httpx
 import uvicorn
-from cachetools import cached  # type: ignore
+from cachetools import cached
 from cachetools.keys import hashkey
 from fastmcp import Context, FastMCP
+from fastmcp.server.middleware.rate_limiting import RateLimitingMiddleware
 from pydantic import Field, PositiveFloat
 from pydantic_extra_types.currency_code import ISO4217
 from starlette.middleware import Middleware
@@ -16,7 +17,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from frankfurtermcp import EnvVar, lru_cache, ttl_cache
 from frankfurtermcp.common import AppMetadata
-from frankfurtermcp.middleware import StripUnknownArgumentsMiddleware
+from frankfurtermcp.middleware import RequestSizeLimitMiddleware, StripUnknownArgumentsMiddleware
 from frankfurtermcp.mixin import HTTPHelperMixin, MCPMixin
 from frankfurtermcp.model import CurrencyConversionResponse
 
@@ -398,7 +399,9 @@ def app() -> FastMCP:
     """Create and configure the FastMCP application for the Frankfurter MCP server."""
     app = FastMCP(
         name=AppMetadata.package_metadata["Name"],
-        instructions=AppMetadata.package_metadata["Description"],
+        instructions=AppMetadata.package_metadata["Summary"],
+        version=AppMetadata.package_metadata["Version"],
+        website_url=AppMetadata.PROJECT_URL,
         on_duplicate_prompts="error",
         on_duplicate_resources="error",
         on_duplicate_tools="error",
@@ -406,6 +409,13 @@ def app() -> FastMCP:
     mcp_obj = FrankfurterMCP()
     app_with_features = mcp_obj.register_features(app)
     app_with_features.add_middleware(StripUnknownArgumentsMiddleware())
+    # Token bucket rate limiting (allows controlled bursts)
+    app_with_features.add_middleware(
+        RateLimitingMiddleware(
+            max_requests_per_second=EnvVar.RATE_LIMIT_MAX_REQUESTS_PER_SECOND,
+            burst_capacity=EnvVar.RATE_LIMIT_BURST_CAPACITY,
+        )
+    )
     return app_with_features
 
 
@@ -415,8 +425,12 @@ def main():  # pragma: no cover
         mcp_app = app()
         transport_type = EnvVar.MCP_SERVER_TRANSPORT
         if transport_type != "stdio":
-            # Configure CORS for browser-based clients, see: https://gofastmcp.com/deployment/http#cors-for-browser-based-clients
             middleware = [
+                Middleware(
+                    RequestSizeLimitMiddleware,
+                    max_body_size=EnvVar.REQUEST_SIZE_LIMIT_BYTES,
+                ),
+                # Configure CORS for browser-based clients, see: https://gofastmcp.com/deployment/http#cors-for-browser-based-clients
                 Middleware(
                     CORSMiddleware,
                     allow_origins=EnvVar.CORS_MIDDLEWARE_ALLOW_ORIGINS,
@@ -432,6 +446,12 @@ def main():  # pragma: no cover
             ]
 
             asgi_app = mcp_app.http_app(middleware=middleware, transport=transport_type)
+            if EnvVar.FASTMCP_HOST == "0.0.0.0":
+                logger.warning(
+                    "The server is configured to listen on all IPs ('0.0.0.0'), which may expose it to external network traffic. "
+                    "This is not recommended for production deployments due to security risks. "
+                    "Should you need to expose the server to external traffic, consider using a reverse proxy with proper security measures in place."
+                )
             if "*" in EnvVar.CORS_MIDDLEWARE_ALLOW_ORIGINS:
                 logger.warning(
                     "Cross-Origin Resource Sharing (CORS) allowed origins contains '*', which allows requests from any origin. "
@@ -441,11 +461,19 @@ def main():  # pragma: no cover
             logger.info(
                 f"Starting server with Cross-Origin Resource Sharing (CORS) allowed origins: {', '.join(EnvVar.CORS_MIDDLEWARE_ALLOW_ORIGINS)}"
             )
+            logger.info(
+                f"Server limits: max_concurrency={EnvVar.UVICORN_LIMIT_CONCURRENCY}, "
+                f"max_requests={EnvVar.UVICORN_LIMIT_MAX_REQUESTS}, "
+                f"keep_alive_timeout={EnvVar.UVICORN_TIMEOUT_KEEP_ALIVE}s"
+            )
             uvicorn.run(
                 asgi_app,
                 host=EnvVar.FASTMCP_HOST,
                 port=EnvVar.FASTMCP_PORT,
-                timeout_graceful_shutdown=5,  # seconds
+                timeout_graceful_shutdown=EnvVar.UVICORN_TIMEOUT_GRACEFUL_SHUTDOWN,
+                limit_concurrency=EnvVar.UVICORN_LIMIT_CONCURRENCY,
+                limit_max_requests=EnvVar.UVICORN_LIMIT_MAX_REQUESTS,
+                timeout_keep_alive=EnvVar.UVICORN_TIMEOUT_KEEP_ALIVE,
             )
         else:
             mcp_app.run(transport=transport_type)

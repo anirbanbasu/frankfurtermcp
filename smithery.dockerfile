@@ -1,5 +1,5 @@
 # Use a Python image with uv pre-installed
-FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS uv
+FROM ghcr.io/astral-sh/uv:python3.12-trixie-slim AS uv
 
 # Install the project into `/app`
 WORKDIR /app
@@ -22,7 +22,7 @@ COPY . /app
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev --no-editable
 
-FROM python:3.12.5-slim-bookworm
+FROM python:3.12-slim-trixie
 
 RUN useradd app
 
@@ -30,10 +30,11 @@ WORKDIR /app
 
 COPY --from=uv --chown=app:app /app/.venv /app/.venv
 RUN chown -R app:app /app
-
-USER app
 # Place executables in the environment at the front of the path
 ENV PATH="/app/.venv/bin:$PATH"
+
+USER app
+
 
 ENV FASTMCP_HOST="0.0.0.0"
 ENV MCP_SERVER_TRANSPORT="streamable-http"

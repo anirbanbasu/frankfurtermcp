@@ -105,7 +105,9 @@ docstring-code-format = false
 [tool.coverage.run]
 omit = [
     "tests/*", # Excludes all files and subdirectories within a 'tests' directory at the project root
+    ".venv/*",  # Excludes all files and subdirectories within a 'venv' directory at the project root
 ]
+source = ["."]
 
 [tool.coverage.report]
 fail_under = 100
