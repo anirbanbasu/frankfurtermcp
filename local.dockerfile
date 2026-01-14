@@ -31,10 +31,10 @@ WORKDIR /app
 COPY --from=uv --chown=app:app /app/.venv /app/.venv
 RUN chown -R app:app /app
 
-USER app
-
 # Place executables in the environment at the front of the path
 ENV PATH="/app/.venv/bin:$PATH"
+
+USER app
 
 ENTRYPOINT ["sh", "-c"]
 CMD ["frankfurtermcp"]

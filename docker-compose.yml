@@ -12,7 +12,7 @@ services:
     # Security hardening
     read_only: true
     tmpfs:
-      - /tmp:rw,noexec,nosuid,size=100m
+      - /tmp:rw,noexec,nosuid,size=${DOCKER_TMPFS_SIZE_MB:-100}m
     cap_drop:
       - ALL
     security_opt:

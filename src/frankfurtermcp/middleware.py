@@ -4,8 +4,6 @@ from fastmcp.server.middleware import Middleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
 
-from frankfurtermcp import EnvVar
-
 logger = logging.getLogger(__name__)
 
 
@@ -33,14 +31,14 @@ class StripUnknownArgumentsMiddleware(Middleware):
 class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
     """Middleware to limit the size of HTTP request bodies."""
 
-    def __init__(self, app, max_body_size: int = EnvVar.REQUEST_SIZE_LIMIT_BYTES):
+    def __init__(self, app, max_body_size: int = 0):
         super().__init__(app)
         self.max_body_size = max_body_size
 
     async def dispatch(self, request, call_next):
         if request.headers.get("content-length"):
             content_length = int(request.headers["content-length"])
-            if content_length > self.max_body_size:
+            if self.max_body_size > 0 and content_length > self.max_body_size:
                 return Response(
                     content=f"Request body is too large. Allowed maximum size is {self.max_body_size} bytes.",
                     status_code=413,

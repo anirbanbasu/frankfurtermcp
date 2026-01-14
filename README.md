@@ -32,9 +32,9 @@ Frankfurter MCP will cache calls to the Frankfurter API to improve performance. 
 | `LOG_LEVEL` | [INFO] The level for logging. Changing this level also affects the log output of other dependent libraries that may use the same environment variable. See valid values at [Python logging documentation](https://docs.python.org/3/library/logging.html#logging-levels). |
 | `HTTPX_TIMEOUT` | [5.0] The time for the underlying HTTP client to wait, in seconds, for a response from the Frankfurter API. |
 | `HTTPX_VERIFY_SSL` | [True] This variable can be set to False to turn off SSL certificate verification, if, for instance, you are using a proxy server with a self-signed certificate. However, setting this to False _is advised against_: instead, use the `SSL_CERT_FILE` and `SSL_CERT_DIR` variables to properly configure self-signed certificates. |
-| `FAST_MCP_HOST` | [localhost] This variable specifies which host the MCP server must bind to unless the server transport (see below) is set to `stdio`. _Note that running the server to bind to any IP by specifying `0.0.0.0` raises a security threat. Such a setting should only be used in demo environments._|
+| `FAST_MCP_HOST` | [localhost] This variable specifies which host the MCP server must bind to unless the server transport (see below) is set to `stdio`. _Note that running the server to bind to any IP by specifying `0.0.0.0` poses a security threat. Such a setting should only be used in demo environments._|
 | `FAST_MCP_PORT` | [8000] This variable specifies which port the MCP server must listen on unless the server transport (see below) is set to `stdio`. |
-| `CORS_MIDDLEWARE_ALLOW_ORIGINS` | ["localhost", "127.0.0.1"] This variable specifies [Cross-Origin Resource Sharing (CORS)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS) allowed origins for the MCP server unless the server transport (see below) is set to `stdio`. You **must** set it to "*" explicitly (and you will get a warning by doing so) if you want to test this server over a HTTP transport using [the MCP inspector described below](https://github.com/anirbanbasu/frankfurtermcp?tab=readme-ov-file#the-official-mcp-visual-inspector). |
+| `CORS_MIDDLEWARE_ALLOW_ORIGINS` | ["localhost", "127.0.0.1"] This variable specifies [Cross-Origin Resource Sharing (CORS)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS) allowed origins for the MCP server unless the server transport (see below) is set to `stdio`. You **must** set it to "*" explicitly (and you will get a warning by doing so) if you want to test this server over an HTTP transport using [the MCP inspector described below](https://github.com/anirbanbasu/frankfurtermcp?tab=readme-ov-file#the-official-mcp-visual-inspector). |
 | `MCP_SERVER_TRANSPORT` | [stdio] The acceptable options are `stdio`, `sse` or `streamable-http`. However, in the `.env.template`, the default value is set to `stdio`. |
 | `MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE` | [True] This specifies if additional metadata will be included with the MCP  response from each tool call. The additional metadata, for example, will include the API URL of the Frankfurter server, amongst others, that is used to obtain the responses. |
 | `FRANKFURTER_API_URL` | [https://api.frankfurter.dev/v1] If you are [self-hosting the Frankfurter API](https://hub.docker.com/r/lineofflight/frankfurter), you should change this to the API endpoint address of your deployment. |
@@ -48,6 +48,7 @@ Frankfurter MCP will cache calls to the Frankfurter API to improve performance. 
 | `RATE_LIMIT_MAX_REQUESTS_PER_SECOND` | [10.0] The maximum number of requests allowed per second using a token bucket algorithm. This implements rate limiting to prevent API abuse and ensure fair resource allocation. |
 | `RATE_LIMIT_BURST_CAPACITY` | [20] The burst capacity for the rate limiter, allowing short bursts of requests above the per-second limit. This provides flexibility for legitimate usage patterns while still protecting against sustained high request rates. |
 | `REQUEST_SIZE_LIMIT_BYTES` | [102400] The maximum size in bytes for HTTP request bodies (default 100KB). Requests exceeding this limit will be rejected with a 413 status code. This prevents memory exhaustion attacks from large payloads. Only applies when using HTTP transports (`sse` or `streamable-http`). |
+| `DOCKER_TMPFS_SIZE_MB` | [100] The size in megabytes for the temporary filesystem (`/tmp`) when running in Docker with read-only root filesystem. This temporary storage is used for runtime file operations. Increase this value if the application requires more temporary storage for caching or processing large datasets. Only relevant when deploying with Docker Compose. |
 
 # Usage
 
@@ -90,8 +91,8 @@ There are two Dockerfiles provided in this repository.
 
 First, make a copy of the `.env.template` to a `.env` file. Then, modify the following variables in the `.env` file as needed.
 
- - `FASTMCP_HOST`: Set to `0.0.0.0` to allow external access to the container.
- - `CORS_MIDDLEWARE_ALLOW_ORIGINS`: Set to `*` to allow external access to the MCP server from any origin. _This is needed if you want to test the server using the MCP Inspector over HTTP transport_.
+ - `FASTMCP_HOST`: Set to `0.0.0.0` to allow external access to the container. _This is only for local testing and is not recommended for production deployments_.
+ - `CORS_MIDDLEWARE_ALLOW_ORIGINS`: Set to `*` to allow external access to the MCP server from any origin. _This is needed if you want to test the server using the MCP Inspector over HTTP transport and is not recommended for production deployments_.
 
 To build the image, create the container and start it using Docker Compose, run the following in _WD_.
 

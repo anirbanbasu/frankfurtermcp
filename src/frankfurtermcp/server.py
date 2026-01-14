@@ -425,12 +425,12 @@ def main():  # pragma: no cover
         mcp_app = app()
         transport_type = EnvVar.MCP_SERVER_TRANSPORT
         if transport_type != "stdio":
-            # Configure CORS for browser-based clients, see: https://gofastmcp.com/deployment/http#cors-for-browser-based-clients
             middleware = [
                 Middleware(
                     RequestSizeLimitMiddleware,
                     max_body_size=EnvVar.REQUEST_SIZE_LIMIT_BYTES,
                 ),
+                # Configure CORS for browser-based clients, see: https://gofastmcp.com/deployment/http#cors-for-browser-based-clients
                 Middleware(
                     CORSMiddleware,
                     allow_origins=EnvVar.CORS_MIDDLEWARE_ALLOW_ORIGINS,
