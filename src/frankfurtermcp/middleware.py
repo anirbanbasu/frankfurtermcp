@@ -38,6 +38,7 @@ class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request, call_next):
         if request.headers.get("content-length"):
             content_length = int(request.headers["content-length"])
+            # Effectively disable this check if max_body_size is set to 0 or less.
             if self.max_body_size > 0 and content_length > self.max_body_size:
                 return Response(
                     content=f"Request body is too large. Allowed maximum size is {self.max_body_size} bytes.",

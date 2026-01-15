@@ -30,7 +30,7 @@ Frankfurter MCP will cache calls to the Frankfurter API to improve performance. 
 | Variable |  [Default value] and description   |
 |--------------|----------------|
 | `LOG_LEVEL` | [INFO] The level for logging. Changing this level also affects the log output of other dependent libraries that may use the same environment variable. See valid values at [Python logging documentation](https://docs.python.org/3/library/logging.html#logging-levels). |
-| `HTTPX_TIMEOUT` | [5.0] The time for the underlying HTTP client to wait, in seconds, for a response from the Frankfurter API. |
+| `HTTPX_TIMEOUT` | [5.0] The time for the underlying HTTP client to wait, in seconds, for a response from the Frankfurter API. The acceptable range of values is between 5.0 and 60.0. |
 | `HTTPX_VERIFY_SSL` | [True] This variable can be set to False to turn off SSL certificate verification, if, for instance, you are using a proxy server with a self-signed certificate. However, setting this to False _is advised against_: instead, use the `SSL_CERT_FILE` and `SSL_CERT_DIR` variables to properly configure self-signed certificates. |
 | `FAST_MCP_HOST` | [localhost] This variable specifies which host the MCP server must bind to unless the server transport (see below) is set to `stdio`. _Note that running the server to bind to any IP by specifying `0.0.0.0` poses a security threat. Such a setting should only be used in demo environments._|
 | `FAST_MCP_PORT` | [8000] This variable specifies which port the MCP server must listen on unless the server transport (see below) is set to `stdio`. |
@@ -38,16 +38,16 @@ Frankfurter MCP will cache calls to the Frankfurter API to improve performance. 
 | `MCP_SERVER_TRANSPORT` | [stdio] The acceptable options are `stdio`, `sse` or `streamable-http`. However, in the `.env.template`, the default value is set to `stdio`. |
 | `MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE` | [True] This specifies if additional metadata will be included with the MCP  response from each tool call. The additional metadata, for example, will include the API URL of the Frankfurter server, amongst others, that is used to obtain the responses. |
 | `FRANKFURTER_API_URL` | [https://api.frankfurter.dev/v1] If you are [self-hosting the Frankfurter API](https://hub.docker.com/r/lineofflight/frankfurter), you should change this to the API endpoint address of your deployment. |
-| `LRU_CACHE_MAX_SIZE` | [1024] The maximum size of the least recently used (LRU) cache for API calls. |
-| `TTL_CACHE_MAX_SIZE` | [256] The maximum size of the time-to-live (TTL) cache for API calls. |
-| `TTL_CACHE_TTL_SECONDS` | [900] The time limit, in seconds, of the time-to-live (TTL) cache for API calls. |
-| `UVICORN_LIMIT_CONCURRENCY` | [100] The maximum number of concurrent connections the server will accept. This helps prevent resource exhaustion from too many simultaneous connections. Only applies when using HTTP transports (`sse` or `streamable-http`). |
-| `UVICORN_LIMIT_MAX_REQUESTS` | [10000] The maximum number of requests a worker will process before being restarted. This helps prevent memory leaks from accumulating over time. Only applies when using HTTP transports (`sse` or `streamable-http`). |
-| `UVICORN_TIMEOUT_KEEP_ALIVE` | [60] The timeout in seconds for keeping idle connections alive. Idle connections will be closed after this period to free up resources. Only applies when using HTTP transports (`sse` or `streamable-http`). |
-| `UVICORN_TIMEOUT_GRACEFUL_SHUTDOWN` | [5] The timeout in seconds for graceful shutdown. The server will wait this long for active connections to complete before forcefully shutting down. Only applies when using HTTP transports (`sse` or `streamable-http`). |
-| `RATE_LIMIT_MAX_REQUESTS_PER_SECOND` | [10.0] The maximum number of requests allowed per second using a token bucket algorithm. This implements rate limiting to prevent API abuse and ensure fair resource allocation. |
-| `RATE_LIMIT_BURST_CAPACITY` | [20] The burst capacity for the rate limiter, allowing short bursts of requests above the per-second limit. This provides flexibility for legitimate usage patterns while still protecting against sustained high request rates. |
-| `REQUEST_SIZE_LIMIT_BYTES` | [102400] The maximum size in bytes for HTTP request bodies (default 100KB). Requests exceeding this limit will be rejected with a 413 status code. This prevents memory exhaustion attacks from large payloads. Only applies when using HTTP transports (`sse` or `streamable-http`). |
+| `LRU_CACHE_MAX_SIZE` | [1024] The maximum size of the least recently used (LRU) cache for API calls. The acceptable range of values is between 128 and 65536. |
+| `TTL_CACHE_MAX_SIZE` | [256] The maximum size of the time-to-live (TTL) cache for API calls. The acceptable range of values is between 64 and 16384. |
+| `TTL_CACHE_TTL_SECONDS` | [900] The time limit, in seconds, of the time-to-live (TTL) cache for API calls. The acceptable range of values is between 60 and 3600. |
+| `UVICORN_LIMIT_CONCURRENCY` | [100] The maximum number of concurrent connections the server will accept. This helps prevent resource exhaustion from too many simultaneous connections. Only applies when using HTTP transports (`sse` or `streamable-http`). The acceptable range of values is between 10 and 10000. |
+<!-- | `UVICORN_LIMIT_MAX_REQUESTS` | [10000] The maximum number of requests a worker will process before being restarted. This helps prevent memory leaks from accumulating over time. Only applies when using HTTP transports (`sse` or `streamable-http`). The acceptable range of values is between 1000 and 1000000. | -->
+| `UVICORN_TIMEOUT_KEEP_ALIVE` | [60] The timeout in seconds for keeping idle connections alive. Idle connections will be closed after this period to free up resources. Only applies when using HTTP transports (`sse` or `streamable-http`). The acceptable range of values is between 60 and 300. |
+| `UVICORN_TIMEOUT_GRACEFUL_SHUTDOWN` | [5] The timeout in seconds for graceful shutdown. The server will wait this long for active connections to complete before forcefully shutting down. Only applies when using HTTP transports (`sse` or `streamable-http`). The acceptable range of values is between 5 and 60. |
+| `RATE_LIMIT_MAX_REQUESTS_PER_SECOND` | [10.0] The maximum number of requests allowed per second using a token bucket algorithm. This implements rate limiting to prevent API abuse and ensure fair resource allocation. The acceptable range of values is between 1.0 and 10000.0. |
+| `RATE_LIMIT_BURST_CAPACITY` | [20] The burst capacity for the rate limiter, allowing short bursts of requests above the per-second limit. This provides flexibility for legitimate usage patterns while still protecting against sustained high request rates. The acceptable range of values is between 2x and 5x the `RATE_LIMIT_MAX_REQUESTS_PER_SECOND` value. |
+| `REQUEST_SIZE_LIMIT_BYTES` | [102400] The maximum size in bytes for HTTP request bodies (default 100KB). Requests exceeding this limit will be rejected with a 413 status code. This prevents memory exhaustion attacks from large payloads. Only applies when using HTTP transports (`sse` or `streamable-http`). The acceptable range of values is between 10240 (10KB) and 524288 (512KB). |
 | `DOCKER_TMPFS_SIZE_MB` | [100] The size in megabytes for the temporary filesystem (`/tmp`) when running in Docker with read-only root filesystem. This temporary storage is used for runtime file operations. Increase this value if the application requires more temporary storage for caching or processing large datasets. Only relevant when deploying with Docker Compose. |
 
 # Usage
@@ -124,7 +124,7 @@ The currently available cloud hosted options are as follows.
 
  - FastMCP Cloud: https://frankfurtermcp.fastmcp.app/mcp
  - Glama.AI: https://glama.ai/mcp/servers/@anirbanbasu/frankfurtermcp
- - Smithery.AI: https://smithery.ai/server/@anirbanbasu/frankfurtermcp
+ - Smithery.AI: https://smithery.ai/server/@anirbanbasu/frankfurtermcp (_This will be deprecated beyond March 2026._)
 
 
 ## Client access
@@ -238,12 +238,29 @@ Test coverage complete.
 
 [MIT](https://choosealicense.com/licenses/mit/).
 
+# Security considerations
+
+This section documents security-related findings from vulnerability scans and provides context for deployment decisions.
+
+## Airtable vulnerability scan findings and rationale
+
+Check for security-related findings from [the Airtable vulnerability scan](https://airtable.com/appXjXF6ejJL028Rl/shrwBNQSIDMCo00jO) (search for `frankfurtermcp`) below, along with rationale and counter-arguments.
+
+| Rule ID | Issue and counter arguments |
+|----------------------|-------------------|
+| MCP-R001 | **Issue**: Tools are registered dynamically at server startup without cryptographic signatures, immutable versioning, or integrity checks. The architecture permits hot-reload scenarios (via `register_features` pattern), but no signature verification or approval flow exists.<br/><br/>**Counter arguments**: Tools are not loaded from external sources or plugins—they are defined directly in the application source code. Integrity is ensured through version control and code review processes. Since tools are part of the application binary (not dynamically loaded plugins), cryptographic signing would add complexity without meaningful security benefit. |
+| MCP-R004 | **Issue**: The server warns but accepts wildcard in CORS origins.<br/><br/>**Counter arguments**: This server is not intended to be run directly in a production environment when using HTTP transports. _For deployments with stricter CORS origin control, users should use the `.env.template` defaults (`127.0.0.1`) and deploy the server behind their own reverse proxy with appropriate CORS origin controls at the reverse proxy level_. |
+| MCP-R005 | **Issue**: There is no TLS enforcement when the server is set to listen on `0.0.0.0`, e.g., in the `smithery.dockerfile`.<br/><br/>**Counter arguments**: This configuration is a requirement for deployment on [Smithery](https://smithery.ai/), which functions as an MCP gateway. Smithery provides its own security layer including TLS termination, authentication, and access control. If TLS requirement is enforced in the code, the Smithery deployment will fail. _For local deployments, users should use the `.env.template` defaults (`127.0.0.1`) or deploy the server behind their own reverse proxy with appropriate security controls. The warning in the code serves to alert users when binding to all interfaces_. |
+| MCP-R013 | **Issue**: There is no support for HTTPS when the server binds to any IP other than 127.0.0.1.<br/><br/>**Counter arguments**: This server is not intended to be run directly in a production environment with HTTPS support when using HTTP transports. _For deployments requiring HTTPS support, users should use the `.env.template` defaults (`127.0.0.1`) and deploy the server behind their own reverse proxy with appropriate HTTPS configuration_. |
+| MCP-R018 | **Issue**: There are no authentication or authorisation checks.<br/><br/>**Counter arguments**: This server is not intended to be run directly in a multi-user mode of operation when using HTTP transports. _For deployments with access control, users should use the `.env.template` defaults (`127.0.0.1`) and deploy the server behind their own reverse proxy with appropriate security controls_. |
+
 # Project status
 
 Following is a table of some updates regarding the project status. Note that these do not correspond to specific commits or milestones.
 
 | Date     |  Status   |  Notes or observations   |
 |----------|:-------------:|----------------------|
+| January 15, 2025 |  active |  Improved code with rate and size limiting middleware. |
 | December 2, 2025 |  active |  Added a middleware to remove unknown tool arguments, such as [those passed by `n8n`](https://github.com/n8n-io/n8n/issues/21500). |
 | November 26, 2025 |  active |  Using the new [`ToolResult` to package response metadata](https://gofastmcp.com/servers/tools#toolresult-and-metadata). |
 | November 21, 2025 |  active |  New tooling using `prek` (instead of `pre-commit`), `ty` (instead of `mypy`) and `just`. |

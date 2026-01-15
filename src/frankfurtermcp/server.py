@@ -463,7 +463,7 @@ def main():  # pragma: no cover
             )
             logger.info(
                 f"Server limits: max_concurrency={EnvVar.UVICORN_LIMIT_CONCURRENCY}, "
-                f"max_requests={EnvVar.UVICORN_LIMIT_MAX_REQUESTS}, "
+                # f"max_requests={EnvVar.UVICORN_LIMIT_MAX_REQUESTS}, "
                 f"keep_alive_timeout={EnvVar.UVICORN_TIMEOUT_KEEP_ALIVE}s"
             )
             uvicorn.run(
@@ -472,7 +472,6 @@ def main():  # pragma: no cover
                 port=EnvVar.FASTMCP_PORT,
                 timeout_graceful_shutdown=EnvVar.UVICORN_TIMEOUT_GRACEFUL_SHUTDOWN,
                 limit_concurrency=EnvVar.UVICORN_LIMIT_CONCURRENCY,
-                limit_max_requests=EnvVar.UVICORN_LIMIT_MAX_REQUESTS,
                 timeout_keep_alive=EnvVar.UVICORN_TIMEOUT_KEEP_ALIVE,
             )
         else:
