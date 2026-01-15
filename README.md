@@ -124,7 +124,7 @@ The currently available cloud hosted options are as follows.
 
  - FastMCP Cloud: https://frankfurtermcp.fastmcp.app/mcp
  - Glama.AI: https://glama.ai/mcp/servers/@anirbanbasu/frankfurtermcp
- - Smithery.AI: https://smithery.ai/server/@anirbanbasu/frankfurtermcp
+ - Smithery.AI: https://smithery.ai/server/@anirbanbasu/frankfurtermcp (_This will be deprecated beyond March 2026._)
 
 
 ## Client access
