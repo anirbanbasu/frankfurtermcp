@@ -77,8 +77,10 @@ class EnvVar:
     )
     RATE_LIMIT_BURST_CAPACITY = env.int(
         "RATE_LIMIT_BURST_CAPACITY",
-        default=20,
-        validate=Range(min=2 * RATE_LIMIT_MAX_REQUESTS_PER_SECOND, max=5 * RATE_LIMIT_MAX_REQUESTS_PER_SECOND),
+        default=int(2 * RATE_LIMIT_MAX_REQUESTS_PER_SECOND),
+        validate=Range(
+            min=int(2 * RATE_LIMIT_MAX_REQUESTS_PER_SECOND), max=int(5 * RATE_LIMIT_MAX_REQUESTS_PER_SECOND)
+        ),
     )
 
     # Request size limit
