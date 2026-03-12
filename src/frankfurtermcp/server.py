@@ -402,9 +402,6 @@ def app() -> FastMCP:
         instructions=AppMetadata.package_metadata["Summary"],
         version=AppMetadata.package_metadata["Version"],
         website_url=AppMetadata.PROJECT_URL,
-        on_duplicate_prompts="error",
-        on_duplicate_resources="error",
-        on_duplicate_tools="error",
     )
     mcp_obj = FrankfurterMCP()
     app_with_features = mcp_obj.register_features(app)

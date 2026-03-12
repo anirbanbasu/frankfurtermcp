@@ -1,7 +1,7 @@
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue?logo=python&logoColor=3776ab&labelColor=e4e4e4)](https://www.python.org/downloads/release/python-3120/) [![pytest](https://github.com/anirbanbasu/frankfurtermcp/actions/workflows/uv-pytest-coverage.yml/badge.svg)](https://github.com/anirbanbasu/frankfurtermcp/actions/workflows/uv-pytest-coverage.yml) ![GitHub commits since latest release](https://img.shields.io/github/commits-since/anirbanbasu/frankfurtermcp/latest)
  [![PyPI](https://img.shields.io/pypi/v/frankfurtermcp?label=pypi%20package)](https://pypi.org/project/frankfurtermcp/#history)
-[![PyPI - Downloads](https://img.shields.io/pypi/dm/frankfurtermcp?label=pypi%20downloads)](https://pypi.org/project/frankfurtermcp/)
-[![Verified on MseeP](https://mseep.ai/badge.svg)](https://mseep.ai/app/c6527bdb-9b60-430d-9ed6-cb3c8b9a2b54) [![smithery badge](https://smithery.ai/badge/@anirbanbasu/frankfurtermcp)](https://smithery.ai/server/@anirbanbasu/frankfurtermcp)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/frankfurtermcp?label=pypi%20downloads)](https://pypi.org/project/frankfurtermcp/) [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/anirbanbasu/frankfurtermcp/badge)](https://scorecard.dev/viewer/?uri=github.com/anirbanbasu/frankfurtermcp)
+[![Verified on MseeP](https://mseep.ai/badge.svg)](https://mseep.ai/app/c6527bdb-9b60-430d-9ed6-cb3c8b9a2b54)
 
 # Frankfurter MCP
 
@@ -21,7 +21,7 @@ Install [uv](https://docs.astral.sh/uv/getting-started/installation/). To instal
 
 Following is a list of environment variables that can be used to configure the application. A template of environment variables is provided in the file `.env.template`. _Note that the default values listed in the table below are not always the same as those in the `.env.template` file_.
 
-The following environment variables can be specified, prefixed with `FASTMCP_`: `HOST`, `PORT`, `DEBUG` and `LOG_LEVEL`. See [global configuration options](https://gofastmcp.com/servers/server#global-settings) for FastMCP. Note that `on_duplicate_` prefixed options specified as environment variables _will be ignored_.
+The following environment variables can be specified, prefixed with `FASTMCP_`: `HOST`, `PORT`, `DEBUG` and `LOG_LEVEL`.
 
 The underlying HTTP client also respects some environment variables, as documented in [the HTTPX library](https://www.python-httpx.org/environment_variables/). In addition, `SSL_CERT_FILE` and `SSL_CERT_DIR` can be configured to use self-signed certificates of hosted API endpoint or intermediate HTTP(S) proxy server(s).
 
@@ -83,12 +83,7 @@ python -m frankfurtermcp.server
 
 ### Server using Docker
 
-There are two Dockerfiles provided in this repository.
-
- - `local.dockerfile` for containerising the Frankfurter MCP server.
- - `smithery.dockerfile` for deploying to [Smithery AI](https://smithery.ai/), which you do not have to use. Note that runtime hardening of the container based on this Dockerfile is not provided in this repository through Docker Compose because this is managed by Smithery AI during deployment.
-
-First, make a copy of the `.env.template` to a `.env` file. Then, modify the following variables in the `.env` file as needed.
+There is a Dockerfiles provided in this repository: `local.dockerfile` for containerising the Frankfurter MCP server. First, make a copy of the `.env.template` to a `.env` file. Then, modify the following variables in the `.env` file as needed.
 
  - `FASTMCP_HOST`: Set to `0.0.0.0` to allow external access to the container. _This is only for local testing and is not recommended for production deployments_.
  - `CORS_MIDDLEWARE_ALLOW_ORIGINS`: Set to `*` to allow external access to the MCP server from any origin. _This is needed if you want to test the server using the MCP Inspector over HTTP transport and is not recommended for production deployments_.
@@ -123,7 +118,6 @@ The currently available cloud hosted options are as follows.
 
  - FastMCP Cloud: https://frankfurtermcp.fastmcp.app/mcp
  - Glama.AI: https://glama.ai/mcp/servers/@anirbanbasu/frankfurtermcp
- - Smithery.AI: https://smithery.ai/server/@anirbanbasu/frankfurtermcp (_This will be deprecated beyond March 2026._)
 
 
 ## Client access
@@ -227,7 +221,7 @@ Legend:
 =============================================================== 15 passed in 4.09s ===============================================================
 Name    Stmts   Miss    Cover   Missing
 ---------------------------------------
-TOTAL     244      0  100.00%
+TOTAL     265      0  100.00%
 
 6 files skipped due to complete coverage.
 Test coverage complete.

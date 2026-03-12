@@ -1,9 +1,0 @@
-# Check reference at https://smithery.ai/docs/build/project-config/smithery-yaml and https://smithery.ai/docs/build/deployments/custom-container
-runtime: "container"
-build:
-  dockerfile: "smithery.dockerfile"
-  dockerBuildPath: "."
-startCommand:
-  type: "http"  # Changed from stdio
-  configSchema: {}
-  exampleConfig: {}
