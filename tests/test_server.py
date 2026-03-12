@@ -69,7 +69,7 @@ class TestMCPServer:
         """Test the creation of the FastMCP application."""
         mcp_server = frankfurtermcp_app()
         assert isinstance(mcp_server, FastMCP), "Expected mcp_server to be an instance of FastMCP"
-        tools_list = asyncio.run(mcp_server.get_tools())
+        tools_list = asyncio.run(mcp_server.list_tools())
         assert len(tools_list) == 6, (
             f"Expected exactly 6 tools to be registered in the MCP server, got {len(tools_list)}"
         )
