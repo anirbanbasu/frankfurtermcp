@@ -249,15 +249,4 @@ Check for security-related findings from [the Airtable vulnerability scan](https
 
 # Project status
 
-Following is a table of some updates regarding the project status. Note that these do not correspond to specific commits or milestones.
-
-| Date     |  Status   |  Notes or observations   |
-|----------|:-------------:|----------------------|
-| January 15, 2025 |  active |  Improved code with rate and size limiting middleware. |
-| December 2, 2025 |  active |  Added a middleware to remove unknown tool arguments, such as [those passed by `n8n`](https://github.com/n8n-io/n8n/issues/21500). |
-| November 26, 2025 |  active |  Using the new [`ToolResult` to package response metadata](https://gofastmcp.com/servers/tools#toolresult-and-metadata). |
-| November 21, 2025 |  active |  New tooling using `prek` (instead of `pre-commit`), `ty` (instead of `mypy`) and `just`. |
-| September 6, 2025 |  active |  Code refactoring and cleanup. |
-| June 27, 2025 |  active |  Successful remote deployments on Glama.AI and Smithery.AI. |
-| June 9, 2025 |  active |  Added containerisation, support for self-signed proxies. |
-| June 7, 2025 |  active |  Project started. Added tools to cover all the functionalities of the Frankfurter API. |
+The current status of the project is **active** as of the last update of this README. See the [CHANGELOG](CHANGELOG.md) for a detailed list of changes.
