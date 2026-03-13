@@ -31,7 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/) and versi
 
 - None documented yet.
 
-## [0.4.3] - 2025-12-02
+## [0.4.3] - 2026-01-15
 
 ### Added
 
