@@ -243,21 +243,9 @@ Check for security-related findings from [the Airtable vulnerability scan](https
 |----------------------|-------------------|
 | MCP-R001 | **Issue**: Tools are registered dynamically at server startup without cryptographic signatures, immutable versioning, or integrity checks. The architecture permits hot-reload scenarios (via `register_features` pattern), but no signature verification or approval flow exists.<br/><br/>**Counter arguments**: Tools are not loaded from external sources or plugins—they are defined directly in the application source code. Integrity is ensured through version control and code review processes. Since tools are part of the application binary (not dynamically loaded plugins), cryptographic signing would add complexity without meaningful security benefit. |
 | MCP-R004 | **Issue**: The server warns but accepts wildcard in CORS origins.<br/><br/>**Counter arguments**: This server is not intended to be run directly in a production environment when using HTTP transports. _For deployments with stricter CORS origin control, users should use the `.env.template` defaults (`127.0.0.1`) and deploy the server behind their own reverse proxy with appropriate CORS origin controls at the reverse proxy level_. |
-| MCP-R005 | **Issue**: There is no TLS enforcement when the server is set to listen on `0.0.0.0`, e.g., in the `smithery.dockerfile`.<br/><br/>**Counter arguments**: This configuration is a requirement for deployment on [Smithery](https://smithery.ai/), which functions as an MCP gateway. Smithery provides its own security layer including TLS termination, authentication, and access control. If TLS requirement is enforced in the code, the Smithery deployment will fail. _For local deployments, users should use the `.env.template` defaults (`127.0.0.1`) or deploy the server behind their own reverse proxy with appropriate security controls. The warning in the code serves to alert users when binding to all interfaces_. |
 | MCP-R013 | **Issue**: There is no support for HTTPS when the server binds to any IP other than 127.0.0.1.<br/><br/>**Counter arguments**: This server is not intended to be run directly in a production environment with HTTPS support when using HTTP transports. _For deployments requiring HTTPS support, users should use the `.env.template` defaults (`127.0.0.1`) and deploy the server behind their own reverse proxy with appropriate HTTPS configuration_. |
 | MCP-R018 | **Issue**: There are no authentication or authorisation checks.<br/><br/>**Counter arguments**: This server is not intended to be run directly in a multi-user mode of operation when using HTTP transports. _For deployments with access control, users should use the `.env.template` defaults (`127.0.0.1`) and deploy the server behind their own reverse proxy with appropriate security controls_. |
 
 # Project status
 
-Following is a table of some updates regarding the project status. Note that these do not correspond to specific commits or milestones.
-
-| Date     |  Status   |  Notes or observations   |
-|----------|:-------------:|----------------------|
-| January 15, 2025 |  active |  Improved code with rate and size limiting middleware. |
-| December 2, 2025 |  active |  Added a middleware to remove unknown tool arguments, such as [those passed by `n8n`](https://github.com/n8n-io/n8n/issues/21500). |
-| November 26, 2025 |  active |  Using the new [`ToolResult` to package response metadata](https://gofastmcp.com/servers/tools#toolresult-and-metadata). |
-| November 21, 2025 |  active |  New tooling using `prek` (instead of `pre-commit`), `ty` (instead of `mypy`) and `just`. |
-| September 6, 2025 |  active |  Code refactoring and cleanup. |
-| June 27, 2025 |  active |  Successful remote deployments on Glama.AI and Smithery.AI. |
-| June 9, 2025 |  active |  Added containerisation, support for self-signed proxies. |
-| June 7, 2025 |  active |  Project started. Added tools to cover all the functionalities of the Frankfurter API. |
+The current status of the project is **active** as of the last update of this README. See the [CHANGELOG](CHANGELOG.md) for a detailed list of changes.
