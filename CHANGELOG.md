@@ -9,11 +9,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/) and versi
 ### Added
 
 - Added CodeQL and OpenSSF vulnerability scanning.
-- Improved package management and upgrade constraints.
+- Added a CHANGELOG file.
 
 ### Changed
 
-- None documented yet.
+- Improved package management and upgrade constraints.
 
 ### Deprecated
 
