@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/) and this project adheres to [Semantic Versioning](https://semver.org/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/) and versioning follows [PEP 440](https://peps.python.org/pep-0440/) and Python packaging conventions.
 
 ## [unreleased]
 
@@ -21,7 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/) and this 
 
 ### Removed
 
-- Smithery is no longer supported.
+- Smithery support has been removed.
 
 ### Fixed
 
