@@ -83,7 +83,7 @@ python -m frankfurtermcp.server
 
 ### Server using Docker
 
-There is a Dockerfiles provided in this repository: `local.dockerfile` for containerising the Frankfurter MCP server. First, make a copy of the `.env.template` to a `.env` file. Then, modify the following variables in the `.env` file as needed.
+There is a Dockerfile provided in this repository, `local.dockerfile`, for containerising the Frankfurter MCP server. First, make a copy of the `.env.template` to a `.env` file. Then, modify the following variables in the `.env` file as needed.
 
  - `FASTMCP_HOST`: Set to `0.0.0.0` to allow external access to the container. _This is only for local testing and is not recommended for production deployments_.
  - `CORS_MIDDLEWARE_ALLOW_ORIGINS`: Set to `*` to allow external access to the MCP server from any origin. _This is needed if you want to test the server using the MCP Inspector over HTTP transport and is not recommended for production deployments_.
