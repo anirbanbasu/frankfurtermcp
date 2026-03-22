@@ -108,7 +108,19 @@ To stop the container:
 docker compose down
 ```
 
-The `docker-compose.yml` file includes security hardening with read-only filesystem, dropped capabilities, seccomp and AppArmor profiles, and resource limits (512MB memory, 1 CPU).
+To run the container and use the local Frankfurter API server, run the following command. Attach the `-d` flag to run in detached mode. Check the `local_api.env` file to specify the optional environment variables used by the local API server.
+
+```bash
+FRANKFURTER_API_URL=http://frankfurter_api:8080/v1 docker compose --profile local_api up
+```
+
+To stop the container group created with the `local_api` profile, run the following command.
+
+```bash
+docker compose --profile local_api down
+```
+
+The `docker-compose.yml` file includes security hardening with read-only filesystem (where relevant), dropped capabilities, seccomp and AppArmor profiles, and resource limits.
 
 Upon successful build and container start, the MCP server will be available over HTTP at [http://localhost:8000/sse](http://localhost:8000/sse) for the Server Sent Events (SSE) transport, or [http://localhost:8000/mcp](http://localhost:8000/mcp) for the streamable HTTP transport.
 

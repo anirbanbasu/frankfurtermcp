@@ -4,11 +4,14 @@ services:
       context: .
       dockerfile: local.dockerfile
     image: frankfurtermcp:latest
+    pull_policy: build
     container_name: frankfurtermcp
     ports:
       - "8000:8000"
     env_file:
       - .env
+    environment:
+      - FRANKFURTER_API_URL=${FRANKFURTER_API_URL:-https://api.frankfurter.dev/v1}
     # Security hardening
     read_only: true
     tmpfs:
@@ -23,3 +26,39 @@ services:
     cpus: 1.0
     # Restart policy
     restart: unless-stopped
+
+  frankfurter_api:
+    build:
+      context: .
+      dockerfile: local_api.dockerfile
+    image: frankfurter_api:local
+    pull_policy: build
+    container_name: frankfurter_api
+    profiles:
+      - local_api
+    ports:
+      - "8080:8080"
+    volumes:
+      - frankfurter_data:/app/data
+    env_file:
+      - path: local_api.env
+        required: false
+    environment:
+      - DATABASE_URL=sqlite:///app/data/frankfurter.sqlite3
+    # Security hardening
+    read_only: false
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+      - apparmor:docker-default
+    # Resource limits
+    mem_limit: 512m
+    cpus: 1.0
+    # Restart policy
+    restart: unless-stopped
+
+volumes:
+  frankfurter_data:
+    driver: local
+    external: false
