@@ -53,7 +53,7 @@ services:
       - no-new-privileges:true
       - apparmor:docker-default
     # Resource limits
-    mem_limit: 512m
+    mem_limit: 4g
     cpus: 1.0
     # Restart policy
     restart: unless-stopped
