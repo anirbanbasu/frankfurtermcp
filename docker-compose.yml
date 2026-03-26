@@ -4,11 +4,15 @@ services:
       context: .
       dockerfile: local.dockerfile
     image: frankfurtermcp:latest
+    pull_policy: build
     container_name: frankfurtermcp
     ports:
       - "8000:8000"
     env_file:
-      - .env
+      - path: .env
+        required: true
+    environment:
+      - FRANKFURTER_API_URL=${FRANKFURTER_API_URL:-https://api.frankfurter.dev/v1}
     # Security hardening
     read_only: true
     tmpfs:
@@ -19,7 +23,79 @@ services:
       - no-new-privileges:true
       - apparmor:docker-default
     # Resource limits
-    mem_limit: 512m
+    mem_limit: 256m
     cpus: 1.0
     # Restart policy
     restart: unless-stopped
+
+  frankfurter_api_base:
+    # The reason we need this is because the published Docker image for Frankfurter
+    # does not support certain CPU architectures. By building it ourselves, we can
+    # ensure compatibility and also apply any necessary security hardening measures.
+    # If you want to use a specific commit from the Frankfurter repository, change the
+    # `context` field for `build` below to point to the specific commit hash, e.g.,
+    # `https://github.com/lineofflight/frankfurter.git#0b6dbd80716f5abe27e8759fc548b74d35fa82b9`
+    # to use commit `0b6dbd80716f5abe27e8759fc548b74d35fa82b9`.
+    build:
+      context: https://github.com/lineofflight/frankfurter.git
+      dockerfile: Dockerfile
+    image: frankfurter_api_base:local
+    pull_policy: build
+    profiles:
+      - local_api
+      - build_only
+    # Security hardening
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+      - apparmor:docker-default
+    # Resource limits
+    mem_limit: 1g
+    cpus: 1.0
+
+  frankfurter_api:
+    build:
+      context: .
+      dockerfile_inline: |
+        # Build on top of the image produced from the upstream repository Dockerfile.
+        FROM base
+        USER root
+        RUN mkdir -p /app/data && chown -R frankfurter:frankfurter /app/data
+        USER frankfurter
+      additional_contexts:
+        base: service:frankfurter_api_base
+    image: frankfurter_api:local
+    pull_policy: build
+    container_name: frankfurter_api
+    profiles:
+      - local_api
+    ports:
+      - "8080:8080"
+    volumes:
+      - local_api_data:/app/data
+    env_file:
+      - path: local_api.env
+        required: false
+    environment:
+      - DATABASE_URL=sqlite:///app/data/frankfurter.sqlite3
+    # Security hardening
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=${DOCKER_TMPFS_SIZE_MB:-100}m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+      - apparmor:docker-default
+    # Resource limits
+    mem_limit: 2g
+    cpus: 1.0
+    # Restart policy
+    restart: unless-stopped
+
+volumes:
+  local_api_data:
+    driver: local
+    external: false

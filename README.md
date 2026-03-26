@@ -90,7 +90,9 @@ There is a Dockerfile provided in this repository, `local.dockerfile`, for conta
 
 To build the image, create the container and start it using Docker Compose, run the following in _WD_.
 
-If you change the port to anything other than 8000 in `.env`, _do remember to change the port number in `docker-compose.yml`_. Instead of using the `.env` file, you can also modify `docker-compose.yml` to pass individual environment variables using the `environment` section.
+If you change the port to anything other than 8000 in `.env`, _do remember to change the port number in `docker-compose.yml`_.
+
+**Note**: The minimum Docker Compose version needed is 2.24.0. You can check your version by running `docker compose version`. If you have an older version, please update Docker Desktop to get the latest Docker Compose. In addition, the backend must be BuildKit capable.
 
 ```bash
 docker compose up --build
@@ -108,9 +110,26 @@ To stop the container:
 docker compose down
 ```
 
-The `docker-compose.yml` file includes security hardening with read-only filesystem, dropped capabilities, seccomp and AppArmor profiles, and resource limits (512MB memory, 1 CPU).
+To run the container and use the local Frankfurter API server, run the following command. Attach the `-d` flag to run in detached mode. Check the `local_api.env.template` file to specify the optional environment variables used by the local API server.
 
-Upon successful build and container start, the MCP server will be available over HTTP at [http://localhost:8000/sse](http://localhost:8000/sse) for the Server Sent Events (SSE) transport, or [http://localhost:8000/mcp](http://localhost:8000/mcp) for the streamable HTTP transport.
+**Note**: Upon starting the first time, the local Frankfurter API may need some time to fetch updated exchange rates. For subsequent runs, the local Frankfurter API will use cached data and should be faster to start although it will still fetch the latest rates.
+
+
+```bash
+FRANKFURTER_API_URL=http://frankfurter_api:8080/v1 docker compose --profile local_api up --build frankfurtermcp frankfurter_api
+```
+
+To stop the container group created with the `local_api` profile, run the following command.
+
+```bash
+docker compose --profile local_api down
+```
+
+The `docker-compose.yml` file includes security hardening with read-only filesystem (where relevant), dropped capabilities and resource limits.
+
+**Note**: The local API server is built using the latest code from the [Frankfurter GitHub repository](https://github.com/lineofflight/frankfurter), hence this may be unstable. If you want to use a specific commit, change the `context` field for `build` under `frankfurter_api_base` in the `docker-compose.yml` file to point to the specific commit hash, e.g., `https://github.com/lineofflight/frankfurter.git#0b6dbd80716f5abe27e8759fc548b74d35fa82b9` to use commit `0b6dbd80716f5abe27e8759fc548b74d35fa82b9`.
+
+Upon successful build and container start, the MCP server will be available over HTTP at [http://localhost:8000/sse](http://localhost:8000/sse) for the Server Sent Events (SSE) transport, or [http://localhost:8000/mcp](http://localhost:8000/mcp) for the streamable HTTP transport. If you are also starting the local Frankfurter API server, the API endpoint will be available at [http://localhost:8080/v1](http://localhost:8080/v1).
 
 ### Cloud hosted servers
 

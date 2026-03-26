@@ -8,16 +8,41 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/) and versi
 
 ### Added
 
-- Added CodeQL and OpenSSF vulnerability scanning.
-- Added a CHANGELOG file.
+- None documented yet.
 
 ### Changed
 
-- Improved package management and upgrade constraints.
+- None documented yet.
 
 ### Deprecated
 
 - None documented yet.
+
+### Removed
+
+- None documented yet.
+
+### Fixed
+
+- None documented yet.
+
+### Security
+
+| OSV URL | CVSS | ECOSYSTEM | PACKAGE | VERSION | FIXED VERSION | SOURCE |
+|---|---|---|---|---|---|---|
+| https://osv.dev/GHSA-5239-wwwm-4pmq | 3.3 | PyPI | pygments | 2.19.2 | -- | uv.lock |
+
+## [0.4.4] - 2026-03-26
+
+### Added
+
+- Added CodeQL and OpenSSF vulnerability scanning.
+- Added a CHANGELOG file.
+- Added the means to use a local Frankfurter API server with the Docker compose setup.
+
+### Changed
+
+- Improved package management and upgrade constraints.
 
 ### Removed
 
@@ -29,7 +54,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/) and versi
 
 ### Security
 
-- None documented yet.
+| OSV URL | CVSS | ECOSYSTEM | PACKAGE | VERSION | FIXED VERSION | SOURCE |
+|---|---|---|---|---|---|---|
+| https://osv.dev/GHSA-5239-wwwm-4pmq | 3.3 | PyPI | pygments | 2.19.2 | -- | uv.lock |
 
 ## [0.4.3] - 2026-01-15
 
@@ -209,7 +236,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/) and versi
 - Published the package to [PyPI](https://pypi.org/project/frankfurtermcp/).
 
 
-[unreleased]: https://github.com/anirbanbasu/frankfurtermcp/compare/v.0.4.3...HEAD
+[unreleased]: https://github.com/anirbanbasu/frankfurtermcp/compare/v.0.4.4...HEAD
+[0.4.4]: https://github.com/anirbanbasu/frankfurtermcp/compare/v.0.4.3...v.0.4.4
 [0.4.3]: https://github.com/anirbanbasu/frankfurtermcp/compare/v.0.4.2...v.0.4.3
 [0.4.2]: https://github.com/anirbanbasu/frankfurtermcp/compare/v.0.4.1...v.0.4.2
 [0.4.1]: https://github.com/anirbanbasu/frankfurtermcp/compare/v.0.4.0.post1...v.0.4.1
