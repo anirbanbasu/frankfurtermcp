@@ -110,7 +110,9 @@ To stop the container:
 docker compose down
 ```
 
-To run the container and use the local Frankfurter API server, run the following command. Attach the `-d` flag to run in detached mode. Check the `local_api.env.template` file to specify the optional environment variables used by the local API server. _Note that the local API server is built using the latest code from the [Frankfurter GitHub repository](https://github.com/lineofflight/frankfurter)_.
+To run the container and use the local Frankfurter API server, run the following command. Attach the `-d` flag to run in detached mode. Check the `local_api.env.template` file to specify the optional environment variables used by the local API server.
+
+**Note**: Upon starting the first time, the local Frankfurter API may need some time to fetch updated exchange rates. For subsequent runs, the local Frankfurter API will use cached data and should be faster to start although it will still fetch the latest rates.
 
 
 ```bash
@@ -125,7 +127,9 @@ docker compose --profile local_api down
 
 The `docker-compose.yml` file includes security hardening with read-only filesystem (where relevant), dropped capabilities and resource limits.
 
-Upon successful build and container start, the MCP server will be available over HTTP at [http://localhost:8000/sse](http://localhost:8000/sse) for the Server Sent Events (SSE) transport, or [http://localhost:8000/mcp](http://localhost:8000/mcp) for the streamable HTTP transport.
+**Note**: The local API server is built using the latest code from the [Frankfurter GitHub repository](https://github.com/lineofflight/frankfurter), hence this may be unstable. If you want to use a specific commit, change the `context` field for `build` under `frankfurter_api_base` in the `docker-compose.yml` file to point to the specific commit hash, e.g., `https://github.com/lineofflight/frankfurter.git#0b6dbd80716f5abe27e8759fc548b74d35fa82b9` to use commit `0b6dbd80716f5abe27e8759fc548b74d35fa82b9`.
+
+Upon successful build and container start, the MCP server will be available over HTTP at [http://localhost:8000/sse](http://localhost:8000/sse) for the Server Sent Events (SSE) transport, or [http://localhost:8000/mcp](http://localhost:8000/mcp) for the streamable HTTP transport. If you are also starting the local Frankfurter API server, the API endpoint will be available at [http://localhost:8080/v1](http://localhost:8080/v1).
 
 ### Cloud hosted servers
 
