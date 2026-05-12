@@ -46,7 +46,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/) and versi
 
 ### Fixed
 
-- Vulnerabilities as shown below.
+- Vulnerabilities fixed as shown below.
 
 | OSV URL | CVSS | ECOSYSTEM | PACKAGE | VERSION | FIXED VERSION | SOURCE |
 |---|---|---|---|---|---|---|
