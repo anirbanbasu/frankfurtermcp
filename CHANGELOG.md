@@ -265,7 +265,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/) and versi
 - Published the package to [PyPI](https://pypi.org/project/frankfurtermcp/).
 
 
-[unreleased]: https://github.com/anirbanbasu/frankfurtermcp/compare/v.0.4.4...HEAD
+[unreleased]: https://github.com/anirbanbasu/frankfurtermcp/compare/v.0.4.5...HEAD
+[0.4.5]: https://github.com/anirbanbasu/frankfurtermcp/compare/v.0.4.4...v.0.4.5
 [0.4.4]: https://github.com/anirbanbasu/frankfurtermcp/compare/v.0.4.3...v.0.4.4
 [0.4.3]: https://github.com/anirbanbasu/frankfurtermcp/compare/v.0.4.2...v.0.4.3
 [0.4.2]: https://github.com/anirbanbasu/frankfurtermcp/compare/v.0.4.1...v.0.4.2
