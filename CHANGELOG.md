@@ -28,9 +28,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/) and versi
 
 ### Security
 
+- None documented yet.
+
+## [0.4.5] - 2026-05-12
+
+### Added
+
+- None documented yet.
+
+### Changed
+
+- Upgraded dependencies.
+
+### Removed
+
+- Smithery support has been removed.
+
+### Fixed
+
+- Vulnerabilities as shown below.
+
 | OSV URL | CVSS | ECOSYSTEM | PACKAGE | VERSION | FIXED VERSION | SOURCE |
 |---|---|---|---|---|---|---|
-| https://osv.dev/GHSA-5239-wwwm-4pmq | 3.3 | PyPI | pygments | 2.19.2 | -- | uv.lock |
+| https://osv.dev/GHSA-m8x7-r2rg-vh5g | 6.7 | PyPI | fastmcp | 3.1.1 | 3.2.0 | uv.lock |
+| https://osv.dev/GHSA-rww4-4w9c-7733 | 8.2 | PyPI | fastmcp | 3.1.1 | 3.2.0 | uv.lock |
+| https://osv.dev/GHSA-vv7q-7jx5-f767 | 10.0 | PyPI | fastmcp | 3.1.1 | 3.2.0 | uv.lock |
+
+
+### Security
+
+- None documented yet.
 
 ## [0.4.4] - 2026-03-26
 
@@ -53,6 +80,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/) and versi
 - AirTable vulnerability scan improvements.
 
 ### Security
+
+- The following vulnerabilities exist.
 
 | OSV URL | CVSS | ECOSYSTEM | PACKAGE | VERSION | FIXED VERSION | SOURCE |
 |---|---|---|---|---|---|---|

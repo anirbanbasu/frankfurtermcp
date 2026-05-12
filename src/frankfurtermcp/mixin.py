@@ -8,7 +8,7 @@ from typing import Any, ClassVar
 import certifi
 import httpx
 from fastmcp import FastMCP
-from fastmcp.tools.tool import ToolResult
+from fastmcp.tools import ToolResult
 from mcp.types import TextContent
 from pydantic import BaseModel, HttpUrl
 
