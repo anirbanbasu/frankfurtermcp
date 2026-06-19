@@ -30,6 +30,51 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/) and versi
 
 - None documented yet.
 
+## [0.4.6] - 2026-06-19
+
+### Added
+
+- None documented yet.
+
+### Changed
+
+- Upgraded dependencies.
+
+### Deprecated
+
+- None documented yet.
+
+### Removed
+
+- None documented yet.
+
+### Fixed
+
+- Multiple vulnerabilities fixed as shown below.
+
+| OSV URL | CVSS | ECOSYSTEM | PACKAGE | VERSION | FIXED VERSION | SOURCE |
+|---|---|---|---|---|---|---|
+| https://osv.dev/GHSA-537c-gmf6-5ccf | 7.5  | PyPI      | cryptography     | 48.0.0  | 48.0.1        | uv.lock |
+| https://osv.dev/PYSEC-2026-175  and https://osv.dev/GHSA-993g-76c3-p5m4  | 4.2  | PyPI      | pyjwt            | 2.12.1  | 2.13.0        | uv.lock |
+| https://osv.dev/PYSEC-2026-177 and https://osv.dev/GHSA-fhv5-28vv-h8m8   | 3.7  | PyPI      | pyjwt            | 2.12.1  | 2.13.0        | uv.lock |
+| https://osv.dev/PYSEC-2026-178 and https://osv.dev/GHSA-w7vc-732c-9m39  | 5.3  | PyPI      | pyjwt            | 2.12.1  | 2.13.0        | uv.lock |
+| https://osv.dev/PYSEC-2026-179 and https://osv.dev/GHSA-xgmm-8j9v-c9wx  | 7.4  | PyPI      | pyjwt            | 2.12.1  | 2.13.0        | uv.lock |
+| https://osv.dev/GHSA-jq35-7prp-9v3f | 5.4  | PyPI      | pyjwt            | 2.12.1  | 2.13.0        | uv.lock |
+| https://osv.dev/GHSA-5rvq-cxj2-64vf | 7.5  | PyPI      | python-multipart | 0.0.29  | 0.0.30        | uv.lock |
+| https://osv.dev/GHSA-6jv3-5f52-599m | 3.7  | PyPI      | python-multipart | 0.0.29  | 0.0.30        | uv.lock |
+| https://osv.dev/GHSA-v9pg-7xvm-68hf | 3.7  | PyPI      | python-multipart | 0.0.29  | 0.0.31        | uv.lock |
+| https://osv.dev/GHSA-vffw-93wf-4j4q | 3.7  | PyPI      | python-multipart | 0.0.29  | 0.0.30        | uv.lock |
+| https://osv.dev/PYSEC-2026-161 and https://osv.dev/GHSA-86qp-5c8j-p5mr | 6.5  | PyPI      | starlette        | 1.0.0   | 1.0.1         | uv.lock |
+| https://osv.dev/GHSA-82w8-qh3p-5jfq | 7.5  | PyPI      | starlette        | 1.0.0   | 1.3.1         | uv.lock |
+| https://osv.dev/GHSA-jp82-jpqv-5vv3 | 3.7  | PyPI      | starlette        | 1.0.0   | 1.3.0         | uv.lock |
+| https://osv.dev/GHSA-wqp7-x3pw-xc5r | 7.5  | PyPI      | starlette        | 1.0.0   | 1.1.0         | uv.lock |
+| https://osv.dev/GHSA-x746-7m8f-x49c | 5.3  | PyPI      | starlette        | 1.0.0   | 1.1.0         | uv.lock |
+
+
+### Security
+
+- None documented yet.
+
 ## [0.4.5] - 2026-05-12
 
 ### Added
@@ -265,7 +310,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/) and versi
 - Published the package to [PyPI](https://pypi.org/project/frankfurtermcp/).
 
 
-[unreleased]: https://github.com/anirbanbasu/frankfurtermcp/compare/v.0.4.5...HEAD
+[unreleased]: https://github.com/anirbanbasu/frankfurtermcp/compare/v.0.4.6...HEAD
+[0.4.6]: https://github.com/anirbanbasu/frankfurtermcp/compare/v.0.4.5...v.0.4.6
 [0.4.5]: https://github.com/anirbanbasu/frankfurtermcp/compare/v.0.4.4...v.0.4.5
 [0.4.4]: https://github.com/anirbanbasu/frankfurtermcp/compare/v.0.4.3...v.0.4.4
 [0.4.3]: https://github.com/anirbanbasu/frankfurtermcp/compare/v.0.4.2...v.0.4.3
