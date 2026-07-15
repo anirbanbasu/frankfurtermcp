@@ -175,6 +175,17 @@ The server entry to run with `stdio` transport that you can use with systems suc
 }
 ```
 
+Or, using `uvx`:
+
+```json
+{
+    "command": "uvx",
+    "args": [
+        "frankfurtermcp"
+    ]
+}
+```
+
 Instead of having `frankfurtermcp` as the last item in the list of `args`, you may need to specify the full path to the script, e.g., _WD_`/.venv/bin/frankfurtermcp`. Likewise, instead of using `uv`, you could also have the following JSON configuration with the path properly substituted for `python3.12`, for instance such as _WD_`/.venv/bin/python3.12`.
 
 ```json
