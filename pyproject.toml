@@ -42,7 +42,7 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [
-    "icecream>=2.1.4,<2.2",
+    "icecream>=2.1.4,<2.3",
     "ruff>=0.14.5,<0.17",
     "ty>=0.0.1a27,<0.2",
 ]
