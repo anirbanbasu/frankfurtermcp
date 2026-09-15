@@ -145,7 +145,7 @@ class HTTPHelperMixin:
         ctx = truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
         cafile = os.environ.get("SSL_CERT_FILE")
         capath = os.environ.get("SSL_CERT_DIR")
-        if cafile or capath:
+        if cafile or capath:  # pragma: no cover
             # Layer any explicitly configured CA locations on top of the OS trust store.
             ctx.load_verify_locations(cafile=cafile, capath=capath)
         client = httpx2.Client(
