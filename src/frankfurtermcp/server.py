@@ -4,7 +4,7 @@ import threading
 from datetime import date
 from typing import Annotated
 
-import httpx
+import httpx2
 import uvicorn
 from cachetools import cached
 from cachetools.keys import hashkey
@@ -94,7 +94,7 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
                 # Questionable choice? Should we just use # pragma: no cover in the respective branch of get_response_content?
                 result = http_response.content.decode()
                 return self.get_response_content(response=result, http_response=http_response)
-        except httpx.RequestError as e:
+        except httpx2.RequestError as e:
             raise ValueError(f"Failed to fetch supported currencies from {self.frankfurter_api_url}. {e}")
 
     @cached(
@@ -122,7 +122,7 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
                 http_response.raise_for_status()
                 result = http_response.json()
                 return result, http_response
-        except httpx.RequestError as e:
+        except httpx2.RequestError as e:
             raise ValueError(f"Failed to fetch latest exchange rates from {self.frankfurter_api_url}. {e}")
 
     @cached(cache=lru_cache, lock=threading.Lock(), key=hashkey)
@@ -162,7 +162,7 @@ class FrankfurterMCP(MCPMixin, HTTPHelperMixin):
                 http_response.raise_for_status()
                 result = http_response.json()
                 return result, http_response
-        except httpx.RequestError as e:
+        except httpx2.RequestError as e:
             raise ValueError(f"Failed to fetch historical exchange rates from {self.frankfurter_api_url}. {e}")
 
     async def get_latest_exchange_rates(

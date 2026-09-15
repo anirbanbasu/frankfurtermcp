@@ -388,8 +388,10 @@ dependencies = [
     { name = "cachetools" },
     { name = "environs" },
     { name = "fastmcp" },
+    { name = "httpx2" },
     { name = "pycountry" },
     { name = "pydantic-extra-types" },
+    { name = "truststore" },
     { name = "types-cachetools" },
 ]
 
@@ -410,8 +412,10 @@ requires-dist = [
     { name = "cachetools", specifier = ">=6.2.1,<7.5" },
     { name = "environs", specifier = ">=14.3.0,<15.5" },
     { name = "fastmcp", specifier = ">=2.13.1,<4.1" },
+    { name = "httpx2", specifier = ">=2.13.0,<2.14" },
     { name = "pycountry", specifier = ">=24.6.1,<27.0" },
     { name = "pydantic-extra-types", specifier = ">=2.10.5,<2.15.0" },
+    { name = "truststore", specifier = ">=0.10.4,<0.11" },
     { name = "types-cachetools", specifier = ">=6.2.0.20250827,<7.1" },
 ]
 

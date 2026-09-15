@@ -5,8 +5,8 @@ import os
 import ssl
 from typing import Any, ClassVar
 
-import certifi
-import httpx
+import httpx2
+import truststore
 from fastmcp import FastMCP
 from fastmcp.tools import ToolResult
 from mcp.types import TextContent
@@ -74,7 +74,7 @@ class MCPMixin:
     def get_response_content(
         self,
         response: Any,
-        http_response: httpx.Response | None = None,
+        http_response: httpx2.Response | None = None,
         include_metadata: bool = EnvVar.MCP_SERVER_INCLUDE_METADATA_IN_RESPONSE,
         cached_response: bool = False,
     ) -> ToolResult:
@@ -82,7 +82,7 @@ class MCPMixin:
 
         Args:
             response (Any): The response data to convert.
-            http_response (httpx.Response): The HTTP response object for header extraction.
+            http_response (httpx2.Response): The HTTP response object for header extraction.
             include_metadata (bool): Whether to include metadata in the response.
             cached_response (bool): Indicates if the response was served from cache, which will be reflected in metadata.
 
@@ -135,18 +135,20 @@ class MCPMixin:
 
 
 class HTTPHelperMixin:
-    """A mixin class to provide HTTP client functionality using httpx."""
+    """A mixin class to provide HTTP client functionality using httpx2."""
 
-    def get_httpx_client(self) -> httpx.Client:
-        """Obtain an HTTPX client for making requests."""
+    def get_httpx_client(self) -> httpx2.Client:
+        """Obtain an HTTPX2 client for making requests."""
         verify = EnvVar.HTTPX_VERIFY_SSL
         if verify is False:  # pragma: no cover
             logging.warning("SSL verification is disabled. This is not recommended for production use.")
-        ctx = ssl.create_default_context(
-            cafile=os.environ.get("SSL_CERT_FILE", certifi.where()),
-            capath=os.environ.get("SSL_CERT_DIR"),
-        )
-        client = httpx.Client(
+        ctx = truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        cafile = os.environ.get("SSL_CERT_FILE")
+        capath = os.environ.get("SSL_CERT_DIR")
+        if cafile or capath:
+            # Layer any explicitly configured CA locations on top of the OS trust store.
+            ctx.load_verify_locations(cafile=cafile, capath=capath)
+        client = httpx2.Client(
             verify=verify if (verify is not None and verify is False) else ctx,
             follow_redirects=True,
             trust_env=True,
