@@ -27,6 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/) and versi
 | OSV URL | CVSS | ECOSYSTEM | PACKAGE | VERSION | FIXED VERSION | SOURCE |
 |---|---|---|---|---|---|---|
 | https://osv.dev/GHSA-4xgf-cpjx-pc3j | 5.3  | PyPI  | pydantic-settings | 2.14.1  | 2.14.2  | uv.lock |
+| https://osv.dev/PYSEC-2026-3552, https://osv.dev/GHSA-g6cj-pr64-35w5   | 8.2  | PyPI   | cryptography | 49.0.0  | 50.0.0 | uv.lock |
 
 
 ### Security
