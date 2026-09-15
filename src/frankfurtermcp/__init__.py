@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 
 from cachetools import LRUCache, TTLCache
 from environs import Env
@@ -98,5 +99,5 @@ logging.basicConfig(
     handlers=[RichHandler(rich_tracebacks=False, markup=True, show_path=False, show_time=False)],
 )
 
-ttl_cache = TTLCache(EnvVar.TTL_CACHE_MAX_SIZE, EnvVar.TTL_CACHE_TTL_SECONDS)
-lru_cache = LRUCache(EnvVar.LRU_CACHE_MAX_SIZE)
+ttl_cache: TTLCache[tuple, Any] = TTLCache(EnvVar.TTL_CACHE_MAX_SIZE, EnvVar.TTL_CACHE_TTL_SECONDS)
+lru_cache: LRUCache[tuple, Any] = LRUCache(EnvVar.LRU_CACHE_MAX_SIZE)
