@@ -24,6 +24,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/) and versi
 
 ### Fixed
 
+- None documented yet.
+
+### Security
+
+- None documented yet.
+
+## [0.5.0] - 2026-09-15
+
+### Added
+
+- None documented yet.
+
+### Changed
+
+- Upgraded dependencies.
+- Widened the `fastmcp` dependency range.
+- Mentioned `uvx` in the configuration for coding agents.
+
+### Deprecated
+
+- None documented yet.
+
+### Removed
+
+- None documented yet.
+
+### Fixed
+
+- `fastmcp` moved its HTTP stack from `httpx`/`certifi` to the Pydantic-maintained `httpx2`, which broke a clean install since `httpx` was only ever pulled in transitively. `httpx2` and `truststore` are now direct dependencies, and SSL verification uses `truststore`'s OS trust store instead of `certifi`.
+
 | OSV URL | CVSS | ECOSYSTEM | PACKAGE | VERSION | FIXED VERSION | SOURCE |
 |---|---|---|---|---|---|---|
 | https://osv.dev/GHSA-4xgf-cpjx-pc3j | 5.3  | PyPI  | pydantic-settings | 2.14.1  | 2.14.2  | uv.lock |
@@ -314,7 +344,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/) and versi
 - Published the package to [PyPI](https://pypi.org/project/frankfurtermcp/).
 
 
-[unreleased]: https://github.com/anirbanbasu/frankfurtermcp/compare/v.0.4.6...HEAD
+[unreleased]: https://github.com/anirbanbasu/frankfurtermcp/compare/v.0.5.0...HEAD
+[0.5.0]: https://github.com/anirbanbasu/frankfurtermcp/compare/v.0.4.6...v.0.5.0
 [0.4.6]: https://github.com/anirbanbasu/frankfurtermcp/compare/v.0.4.5...v.0.4.6
 [0.4.5]: https://github.com/anirbanbasu/frankfurtermcp/compare/v.0.4.4...v.0.4.5
 [0.4.4]: https://github.com/anirbanbasu/frankfurtermcp/compare/v.0.4.3...v.0.4.4
